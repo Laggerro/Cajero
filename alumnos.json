@@ -1,0 +1,62 @@
+[
+  {
+    "dni": "48123456",
+    "nombre": "Lucas",
+    "apellido": "González",
+    "curso": "1er Año A - Economía"
+  },
+  {
+    "dni": "48987654",
+    "nombre": "Sofía",
+    "apellido": "Martínez",
+    "curso": "1er Año A - Economía"
+  },
+  {
+    "dni": "49111222",
+    "nombre": "Mateo",
+    "apellido": "Rodríguez",
+    "curso": "1er Año B - Economía"
+  },
+  {
+    "dni": "49333444",
+    "nombre": "Valentina",
+    "apellido": "López",
+    "curso": "1er Año B - Economía"
+  },
+  {
+    "dni": "47555666",
+    "nombre": "Joaquín",
+    "apellido": "García",
+    "curso": "2do Año A - Economía"
+  },
+  {
+    "dni": "47777888",
+    "nombre": "Camila",
+    "apellido": "Pérez",
+    "curso": "2do Año A - Economía"
+  },
+  {
+    "dni": "46999000",
+    "nombre": "Santiago",
+    "apellido": "Sánchez",
+    "curso": "2do Año B - Economía"
+  },
+  {
+    "dni": "46123987",
+    "nombre": "Lucía",
+    "apellido": "Romero",
+    "curso": "2do Año B - Economía"
+  },
+  {
+    "dni": "45456789",
+    "nombre": "Benjamin",
+    "apellido": "Díaz",
+    "curso": "2do Año B - Economía"
+  },
+  {
+    "dni": "45987612",
+    "nombre": "Martina",
+    "apellido": "Torres",
+    "curso": "2do Año A - Economía"
+  }
+]
