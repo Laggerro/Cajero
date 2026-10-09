@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Cómo se hizo? - eBANK</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
+    .atm-container {
+      width: 980px; height: 620px;
+      background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
+      border: 10px solid #1c2d5a; border-radius: 18px;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
+      box-shadow: 0 0 40px rgba(0, 102, 255, 0.3); position: relative;
+    }
+
+    /* Encabezado */
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e63946; padding: 8px 15px; background: rgba(10, 20, 45, 0.6); border-radius: 8px; }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .school-logo { height: 45px; width: auto; object-fit: contain; }
+    .brand-title { font-size: 26px; font-weight: 800; color: #ffffff; }
+    .brand-title span { color: #e63946; }
+    .subtitle { font-size: 12px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
+
+    /* Layout Grilla: Reducimos laterales para agrandar el centro */
+    .menu-grid { width: 100%; display: flex; justify-content: space-between; align-items: center; flex-grow: 1; padding: 5px 0; }
+    .menu-column { width: 22%; display: flex; flex-direction: column; justify-content: flex-end; }
+    .left-col { text-align: left; }
+    .right-col { text-align: right; }
+
+    .btn-label { font-size: 15px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff; padding: 12px 14px; border-left: 5px solid #00b4d8; border-radius: 6px; }
+    .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
+    .btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
+    .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
+
+    /* Zona Central Agrandada */
+    .content-center { width: 56%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    
+    .photo-caption-top {
+      font-size: 20px;
+      color: #00f0ff;
+      font-weight: 800;
+      margin-bottom: 8px;
+      min-height: 30px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    /* CARRUSEL 3D VISTOSO Y GRANDE */
+    .carousel-3d-wrapper {
+      width: 100%;
+      height: 330px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      perspective: 800px;
+      overflow: hidden;
+    }
+
+    .carousel-card {
+      position: absolute;
+      width: 380px;
+      height: 290px;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      background: #060d1f;
+    }
+
+    .carousel-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Posiciones Tridimensionales del Carrusel */
+    .card-center {
+      transform: translateX(0) scale(1.15) translateZ(0);
+      z-index: 5;
+      border: 3px solid #00b4d8;
+      box-shadow: 0 0 25px rgba(0, 180, 216, 0.5);
+      opacity: 1;
+    }
+
+    .card-left {
+      transform: translateX(-160px) scale(0.8) rotateY(25deg);
+      z-index: 2;
+      opacity: 0.45;
+      border: 1px solid #1c2d5a;
+      filter: blur(1px);
+    }
+
+    .card-right {
+      transform: translateX(160px) scale(0.8) rotateY(-25deg);
+      z-index: 2;
+      opacity: 0.45;
+      border: 1px solid #1c2d5a;
+      filter: blur(1px);
+    }
+
+    .card-hidden {
+      transform: scale(0.5);
+      opacity: 0;
+      z-index: 0;
+    }
+
+    /* Indicador de Puntos Abajo */
+    .dots-container {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+      width: 22px;
+      border-radius: 5px;
+    }
+
+    .pause-indicator { font-size: 12px; color: #e63946; margin-top: 6px; min-height: 18px; font-weight: bold; }
+
+    .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 13px; color: #94a3b8; }
+    .badge { background: #e63946; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="atm-container">
+  <div class="header">
+    <div class="header-left">
+      <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-title">e<span>BANK</span></div>
+        <div class="subtitle">¿Cómo se hizo el Cajero?</div>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="badge">MUESTRA 2026</span>
+      <div class="subtitle" style="margin-top: 4px; color: #00b4d8;">EXPO Técno Contable</div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-column left-col">
+      <div class="btn-label btn-action-w">&lt; SALIR / MENÚ [W]</div>
+    </div>
+
+    <!-- Zona Central Agrandada con Carrusel 3D -->
+    <div class="content-center">
+      <div id="photo-caption-top" class="photo-caption-top">Cargando...</div>
+
+      <div class="carousel-3d-wrapper" id="carousel-wrapper">
+        <!-- Las tarjetas se generan dinámicamente con JS -->
+      </div>
+
+      <div id="dots-container" class="dots-container"></div>
+      <div id="pause-indicator" class="pause-indicator"></div>
+    </div>
+
+    <div class="menu-column right-col">
+      <div class="btn-label btn-action-r">SIGUIENTE [R] &gt;</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>[R] Avanzar Foto (Pausa 10s en foto actual) | [W] Volver al Menú del Cajero</span>
+  </div>
+</div>
+
+<script>
+  const fotosConstruccion = [
+    { src: "construccion/foto1.jpg", titulo: "Foto 1: Ensamblado del Mueble y Monitor" },
+    { src: "construccion/foto2.jpg", titulo: "Foto 2: Conexión de Botones y Placa ESP32" },
+    { src: "construccion/foto3.jpg", titulo: "Foto 3: Pruebas del Software eBANK" },
+    { src: "construccion/foto4.jpg", titulo: "Foto 4: Proyecto Finalizado por los Alumnos" }
+  ];
+
+  let currentIndex = 0;
+  let autoSlideTimer = null;
+  let pauseTimer = null;
+  let inactivityTimer = null;
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, 60000);
+  }
+
+  function initCarousel() {
+    const wrapper = document.getElementById('carousel-wrapper');
+    const dotsContainer = document.getElementById('dots-container');
+    wrapper.innerHTML = '';
+    dotsContainer.innerHTML = '';
+
+    fotosConstruccion.forEach((foto, index) => {
+      // Crear tarjeta de imagen
+      const card = document.createElement('div');
+      card.className = 'carousel-card card-hidden';
+      card.id = `card-${index}`;
+
+      const img = document.createElement('img');
+      img.src = foto.src;
+      img.alt = foto.titulo;
+      img.onerror = function() { this.src = 'logo.png'; };
+
+      card.appendChild(img);
+      wrapper.appendChild(card);
+
+      // Crear indicador de punto
+      const dot = document.createElement('div');
+      dot.className = `dot ${index === 0 ? 'active' : ''}`;
+      dot.id = `dot-${index}`;
+      dotsContainer.appendChild(dot);
+    });
+
+    updateCarouselView();
+  }
+
+  function updateCarouselView() {
+    const total = fotosConstruccion.length;
+
+    fotosConstruccion.forEach((_, index) => {
+      const card = document.getElementById(`card-${index}`);
+      const dot = document.getElementById(`dot-${index}`);
+
+      card.className = 'carousel-card';
+      if (dot) dot.className = 'dot';
+
+      if (index === currentIndex) {
+        card.classList.add('card-center');
+        if (dot) dot.classList.add('active');
+      } else if (index === (currentIndex - 1 + total) % total) {
+        card.classList.add('card-left');
+      } else if (index === (currentIndex + 1) % total) {
+        card.classList.add('card-right');
+      } else {
+        card.classList.add('card-hidden');
+      }
+    });
+
+    document.getElementById('photo-caption-top').innerText = fotosConstruccion[currentIndex].titulo;
+  }
+
+  function startAutoSlide() {
+    clearInterval(autoSlideTimer);
+    document.getElementById('pause-indicator').innerText = "";
+    autoSlideTimer = setInterval(() => {
+      currentIndex = (currentIndex + 1) % fotosConstruccion.length;
+      updateCarouselView();
+    }, 6000); // 6 segundos por foto
+  }
+
+  function pauseCurrentPhoto() {
+    clearInterval(autoSlideTimer);
+    clearTimeout(pauseTimer);
+
+    currentIndex = (currentIndex + 1) % fotosConstruccion.length;
+    updateCarouselView();
+
+    document.getElementById('pause-indicator').innerText = "⏸️ Pausado en la foto actual por 10 segundos";
+
+    pauseTimer = setTimeout(() => {
+      startAutoSlide();
+    }, 10000);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    resetInactivityTimer();
+    const key = e.key.toUpperCase();
+
+    if (key === 'R') {
+      pauseCurrentPhoto();
+    }
+
+    if (key === 'W') {
+      window.location.href = "index.html";
+    }
+  });
+
+  // Inicializar
+  initCarousel();
+  startAutoSlide();
+  resetInactivityTimer();
+</script>
+</body>
+</html>

@@ -17,7 +17,6 @@
       overflow: hidden;
     }
 
-    /* Estructura Pantalla Cajero Moderno Azul */
     .atm-container {
       width: 980px;
       height: 620px;
@@ -32,7 +31,6 @@
       position: relative;
     }
 
-    /* Encabezado */
     .header {
       display: flex;
       justify-content: space-between;
@@ -51,7 +49,26 @@
     .brand-title span { color: #e63946; }
     .subtitle { font-size: 12px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
 
-    /* Cuerpo central */
+    .user-greeting-banner {
+      width: 100%;
+      background: rgba(0, 180, 216, 0.15);
+      border: 1px solid #00b4d8;
+      border-radius: 6px;
+      padding: 8px 15px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #00f0ff;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-greeting-banner.guest {
+      background: rgba(230, 57, 70, 0.15);
+      border-color: #e63946;
+      color: #ff8892;
+    }
+
     .content-body {
       flex-grow: 1;
       display: flex;
@@ -62,7 +79,6 @@
       padding: 10px 20px;
     }
 
-    /* Contenedor del Video Promocional */
     .video-container {
       width: 100%;
       max-width: 650px;
@@ -75,13 +91,8 @@
       margin-bottom: 10px;
     }
 
-    .promo-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .promo-video { width: 100%; height: 100%; object-fit: cover; }
 
-    /* Layout Grilla para alineación con botones laterales */
     .menu-grid {
       width: 100%;
       display: flex;
@@ -91,7 +102,7 @@
       padding: 10px 0;
     }
 
-    .menu-column { width: 48%; display: flex; flex-direction: column; justify-content: space-around; }
+    .menu-column { width: 38%; display: flex; flex-direction: column; justify-content: space-around; }
     .left-col { text-align: left; }
     .right-col { text-align: right; }
 
@@ -107,12 +118,8 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
 
-    .right-col .btn-label {
-      border-left: none;
-      border-right: 5px solid #00b4d8;
-    }
+    .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
 
-    /* Estilo Destacado para opciones de Padres/Visitantes */
     .btn-label.highlight {
       background: linear-gradient(90deg, rgba(230, 57, 70, 0.25) 0%, rgba(230, 57, 70, 0.1) 100%);
       border-right: 6px solid #e63946 !important;
@@ -121,15 +128,13 @@
       text-shadow: 0 0 5px rgba(230, 57, 70, 0.8);
     }
 
-    /* Botones de acción principales (W / R) */
     .btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
     .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
 
-    /* Cajas de entrada */
     .input-box {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: bold;
-      letter-spacing: 4px;
+      letter-spacing: 6px;
       border: 2px solid #00b4d8;
       border-radius: 8px;
       padding: 10px 25px;
@@ -139,32 +144,26 @@
       min-width: 280px;
     }
 
-    /* Pie de pantalla */
-    .footer {
-      text-align: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 10px;
+    .notice {
       font-size: 13px;
-      color: #94a3b8;
+      background: rgba(230, 57, 70, 0.15);
+      border: 1px solid #e63946;
+      color: #ff8892;
+      padding: 8px 15px;
+      border-radius: 6px;
+      margin-top: 10px;
     }
 
+    .warning-msg { color: #e63946; font-weight: bold; font-size: 15px; margin-top: 8px; min-height: 22px; }
+    .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; font-size: 13px; color: #94a3b8; }
     .hidden { display: none !important; }
-    
-    .badge {
-      background: #e63946;
-      color: #fff;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: bold;
-    }
+    .badge { background: #e63946; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
   </style>
 </head>
 <body>
 
 <div class="atm-container">
   
-  <!-- ENCABEZADO CON LOGO Y MARCA -->
   <div class="header">
     <div class="header-left">
       <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
@@ -182,230 +181,431 @@
   <!-- PANTALLA 0: BIENVENIDA CON VIDEO EN BUCLE -->
   <div id="screen-welcome" class="menu-grid">
     <div class="menu-column left-col" style="justify-content: flex-end;">
-      <div class="btn-label" style="visibility: hidden;">&lt; [Q]</div>
-      <div class="btn-label" style="visibility: hidden;">&lt; [A]</div>
-      <div class="btn-label" style="visibility: hidden;">&lt; [Z]</div>
-      <div class="btn-label" style="visibility: hidden;">&lt; [W]</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
     </div>
 
-    <!-- Zona Central con Video -->
     <div class="content-body" style="padding: 0 10px;">
       <div class="video-container">
         <video id="bg-video" class="promo-video" autoplay loop muted playsinline>
           <source src="presentacion.mp4" type="video/mp4">
-          Su navegador no soporta reproducción de video.
         </video>
       </div>
-      <p style="font-size: 15px; color: #a0aec0;">Presione el botón <b>[R]</b> a la derecha para iniciar</p>
+      <p style="font-size: 15px; color: #a0aec0;">Presione el botón lateral para comenzar</p>
     </div>
 
     <div class="menu-column right-col" style="justify-content: flex-end;">
-      <div class="btn-label" style="visibility: hidden;">[E] &gt;</div>
-      <div class="btn-label" style="visibility: hidden;">[D] &gt;</div>
-      <div class="btn-label" style="visibility: hidden;">[C] &gt;</div>
-      <div class="btn-label btn-action-r">COMENZAR [R] &gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label btn-action-r">COMENZAR &gt;</div>
     </div>
   </div>
 
-  <!-- PANTALLA 1: SELECCIÓN DE USUARIO / DNI SIMULADO -->
+  <!-- PANTALLA 1: INGRESO DE DNI -->
   <div id="screen-dni" class="menu-grid hidden">
-    <div class="menu-column left-col">
-      <div class="btn-label">&lt; [Q] Alumno Lucas (48123456)</div>
-      <div class="btn-label">&lt; [A] Alumno Sofía (48987654)</div>
-      <div class="btn-label">&lt; [Z] Alumno Mateo (49111222)</div>
-      <div class="btn-label btn-action-w">&lt; [W] ACEPTAR SELECCIÓN</div>
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label btn-action-w">&lt; ACEPTAR</div>
     </div>
 
     <div class="content-body">
-      <h3>SELECCIÓN DE CLIENTE:</h3>
-      <div id="dni-display" class="input-box">48123456</div>
-      <p style="font-size: 14px; color: #a0aec0;">Presione <b>[W]</b> para ACEPTAR<br>Presione <b>[R]</b> para MODO VISITANTE</p>
+      <h3>INGRESE SU DNI:</h3>
+      <div id="dni-display" class="input-box">_</div>
+      <p style="font-size: 14px; color: #a0aec0;">Ingrese los números con el teclado numérico</p>
+      <div id="dni-warning" class="warning-msg"></div>
     </div>
 
-    <div class="menu-column right-col">
-      <div class="btn-label">[E] Alumno Valentina (49333444) &gt;</div>
-      <div class="btn-label">[D] Alumno Joaquín (47555666) &gt;</div>
-      <div class="btn-label">[C] Otro DNI (Invitado) &gt;</div>
-      <div class="btn-label btn-action-r">INGRESAR COMO VISITANTE [R] &gt;</div>
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label btn-action-r">CANCELAR / VOLVER &gt;</div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 1B: PIN -->
+  <div id="screen-pin" class="menu-grid hidden">
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label" style="visibility: hidden;">&lt;</div>
+      <div class="btn-label btn-action-w">&lt; CONFIRMAR</div>
+    </div>
+
+    <div class="content-body">
+      <h3>INGRESE SU CLAVE PIN (4 DÍG):</h3>
+      <div id="pin-display" class="input-box">_</div>
+      <div class="notice">🔒 Ingrese cualquier clave de 4 dígitos para continuar</div>
+      <div id="pin-warning" class="warning-msg"></div>
+    </div>
+
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label" style="visibility: hidden;">&gt;</div>
+      <div class="btn-label btn-action-r">CANCELAR &gt;</div>
     </div>
   </div>
 
   <!-- PANTALLA 2A: MENÚ ALUMNO -->
-  <div id="screen-menu-alumno" class="menu-grid hidden">
-    <div class="menu-column left-col">
-      <div class="btn-label">&lt; [Q] Consultar Saldo</div>
-      <div class="btn-label">&lt; [A] Extraer $5.000</div>
-      <div class="btn-label">&lt; [Z] Transferencia Rápida</div>
-      <div class="btn-label btn-action-w">&lt; [W] Mi Perfil / Datos</div>
-    </div>
-    <div class="menu-column right-col">
-      <div class="btn-label">Cambiar PIN [E] &gt;</div>
-      <div class="btn-label">Puntos Escolares [D] &gt;</div>
-      <div class="btn-label">--- [C] &gt;</div>
-      <div class="btn-label btn-action-r">SALIR / CANCELAR [R] &gt;</div>
-    </div>
-  </div>
-
-  <!-- PANTALLA 2B: MENÚ VISITANTE (PADRES) CON DESTACADOS -->
-  <div id="screen-menu-visitante" class="menu-grid hidden">
-    <div class="menu-column left-col">
-      <div class="btn-label">&lt; [Q] Probar Saldo Demo</div>
-      <div class="btn-label">&lt; [A] Probar Extracción</div>
-      <div class="btn-label">&lt; [Z] Probar Transferencia</div>
-      <div class="btn-label btn-action-w">&lt; [W] VOLVER AL INICIO</div>
-    </div>
-    <div class="menu-column right-col">
-      <div class="btn-label highlight">Empresas Aliadas [E] &gt;</div>
-      <div class="btn-label highlight">¿Cómo se hizo? [D] &gt;</div>
-      <div class="btn-label highlight">Participantes [C] &gt;</div>
-      <div class="btn-label highlight btn-action-r">Info Institucional [R] &gt;</div>
+  <div id="screen-menu-alumno" class="hidden" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+    <div id="greeting-alumno" class="user-greeting-banner">👋 Bienvenido/a: CLIENTE</div>
+    <div class="menu-grid" style="flex-grow: 1;">
+      <div class="menu-column left-col">
+        <div class="btn-label">&lt; Consultar Saldo</div>
+        <div class="btn-label">&lt; Extraer Dinero</div>
+        <div class="btn-label">&lt; Transferencias</div>
+        <div class="btn-label btn-action-w">&lt; Mi Perfil / Datos</div>
+      </div>
+      <div class="menu-column right-col">
+        <div class="btn-label">Cambiar PIN &gt;</div>
+        <div class="btn-label">Puntos Escolares &gt;</div>
+        <div class="btn-label">--- &gt;</div>
+        <div class="btn-label btn-action-r">SALIR / CANCELAR &gt;</div>
+      </div>
     </div>
   </div>
 
-  <!-- PANTALLA GENERAL DE CONTENIDO / RESPUESTAS -->
+  <!-- PANTALLA 2B: MENÚ VISITANTE -->
+  <div id="screen-menu-visitante" class="hidden" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+    <div class="user-greeting-banner guest">👤 Cliente Invitado / Muestra Anual</div>
+    <div class="menu-grid" style="flex-grow: 1;">
+      <div class="menu-column left-col">
+        <div class="btn-label">&lt; Probar Saldo Demo</div>
+        <div class="btn-label">&lt; Probar Extracción</div>
+        <div class="btn-label">&lt; Probar Transferencia</div>
+        <div class="btn-label btn-action-w">&lt; VOLVER AL INICIO</div>
+      </div>
+      <div class="menu-column right-col">
+        <div class="btn-label highlight">Empresas Aliadas &gt;</div>
+        <div class="btn-label highlight">¿Cómo se hizo? &gt;</div>
+        <div class="btn-label highlight">Participantes &gt;</div>
+        <div class="btn-label highlight btn-action-r">Info Institucional &gt;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTRAS PANTALLAS (Extracción, Transferencia, Cambio PIN, Info) -->
+  <div id="screen-extrac-monto" class="menu-grid hidden">
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-w">&lt; CONFIRMAR RETIRO</div>
+    </div>
+    <div class="content-body">
+      <h3>EXTRACCIÓN DE DINERO</h3>
+      <p style="margin-top:10px; color:#a0aec0;">Ingrese el monto a retirar ($):</p>
+      <div id="extrac-monto-display" class="input-box">$ _</div>
+      <div id="extrac-warning" class="warning-msg"></div>
+    </div>
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-r">CANCELAR &gt;</div>
+    </div>
+  </div>
+
+  <div id="screen-transf-dni" class="menu-grid hidden">
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-w">&lt; BUSCAR DNI</div>
+    </div>
+    <div class="content-body">
+      <h3>TRANSFERENCIA BANCARIA</h3>
+      <p style="margin-top:10px; color:#a0aec0;">Ingrese DNI del destinatario:</p>
+      <div id="transf-dni-display" class="input-box">_</div>
+      <div id="transf-dni-warning" class="warning-msg"></div>
+    </div>
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-r">CANCELAR &gt;</div>
+    </div>
+  </div>
+
+  <div id="screen-transf-monto" class="menu-grid hidden">
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-w">&lt; TRANSFERIR</div>
+    </div>
+    <div class="content-body">
+      <h3 id="transf-dest-title" style="color: #00b4d8;">Destinatario: ---</h3>
+      <p style="margin-top:10px; color:#a0aec0;">Ingrese el monto a transferir ($):</p>
+      <div id="transf-monto-display" class="input-box">$ _</div>
+      <div id="transf-monto-warning" class="warning-msg"></div>
+    </div>
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-r">CANCELAR &gt;</div>
+    </div>
+  </div>
+
+  <div id="screen-cambio-pin" class="menu-grid hidden">
+    <div class="menu-column left-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-w">&lt; GUARDAR PIN</div>
+    </div>
+    <div class="content-body">
+      <h3>CAMBIO DE CLAVE PIN</h3>
+      <p style="margin-top:10px; color:#a0aec0;">Ingrese nueva clave de 4 dígitos:</p>
+      <div id="newpin-display" class="input-box">_</div>
+      <div id="pin-change-warning" class="warning-msg"></div>
+    </div>
+    <div class="menu-column right-col" style="justify-content: flex-end;">
+      <div class="btn-label btn-action-r">CANCELAR &gt;</div>
+    </div>
+  </div>
+
   <div id="screen-info" class="menu-grid hidden">
     <div class="menu-column left-col" style="justify-content: flex-end;">
-      <div class="btn-label" style="visibility: hidden;">&lt; [Q]</div>
-      <div class="btn-label" style="visibility: hidden;">&lt; [A]</div>
-      <div class="btn-label" style="visibility: hidden;">&lt; [Z]</div>
-      <div class="btn-label btn-action-w">&lt; [W] ACEPTAR / CONTINUAR</div>
+      <div class="btn-label btn-action-w">&lt; ACEPTAR / CONTINUAR</div>
     </div>
-
     <div class="content-body">
       <h2 id="info-title" style="color: #00b4d8; margin-bottom: 15px;">Título</h2>
       <div id="info-content" style="font-size: 18px; line-height: 1.6; max-width: 600px;">Contenido</div>
     </div>
-
     <div class="menu-column right-col" style="justify-content: flex-end;">
-      <div class="btn-label" style="visibility: hidden;">[E] &gt;</div>
-      <div class="btn-label" style="visibility: hidden;">[D] &gt;</div>
-      <div class="btn-label" style="visibility: hidden;">[C] &gt;</div>
-      <div class="btn-label btn-action-r">VOLVER / CANCELAR [R] &gt;</div>
+      <div class="btn-label btn-action-r">VOLVER / CANCELAR &gt;</div>
     </div>
   </div>
 
-  <!-- PIE DE PANTALLA -->
   <div class="footer">
-    <span id="footer-text">Controles Laterales: [W] ACEPTAR / CONFIRMAR | [R] CANCELAR / VOLVER</span>
+    <span id="footer-text">Seleccione una opción presionando los botones laterales</span>
   </div>
 </div>
 
 <script>
   let alumnos = [];
+  let inactivityTimer = null;
+  const INACTIVITY_TIME = 60000;
 
   fetch('alumnos.json')
-    .then(response => response.json())
-    .then(data => alumnos = data)
-    .catch(err => console.log("Cargando base por defecto...", err));
+    .then(r => r.json())
+    .then(data => {
+      alumnos = data;
+      checkSession(); // Revisa si había una sesión activa guardada
+    })
+    .catch(err => console.log("Cargando...", err));
 
   let state = {
     currentScreen: 'welcome',
-    selectedDni: '48123456',
+    inputBuffer: '',
     user: null,
     saldo: 0,
-    isAlumno: false
+    isAlumno: false,
+    transfDestName: ''
   };
 
-  // Mapeo de Teclas de la Notebook emulando los 8 botones laterales
+  function saveSession() {
+    sessionStorage.setItem('ebank_session', JSON.stringify({
+      user: state.user,
+      saldo: state.saldo,
+      isAlumno: state.isAlumno
+    }));
+  }
+
+  function checkSession() {
+    const saved = sessionStorage.getItem('ebank_session');
+    if (saved) {
+      const data = JSON.parse(saved);
+      state.user = data.user;
+      state.saldo = data.saldo;
+      state.isAlumno = data.isAlumno;
+
+      if (state.isAlumno && state.user) {
+        document.getElementById('greeting-alumno').innerText = `👋 Bienvenido/a: ${state.user.nombre.toUpperCase()} ${state.user.apellido.toUpperCase()} (${state.user.curso})`;
+        showScreen('menu-alumno');
+      } else {
+        showScreen('menu-visitante');
+      }
+    }
+  }
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    if (state.currentScreen !== 'welcome') {
+      inactivityTimer = setTimeout(() => { resetATM(); }, INACTIVITY_TIME);
+    }
+  }
+
   document.addEventListener('keydown', (e) => {
+    resetInactivityTimer();
     const key = e.key.toUpperCase();
+    clearWarnings();
+
+    if (!isNaN(key) && key !== ' ') { handleNumberInput(key); return; }
+    if (e.key === 'Backspace') { state.inputBuffer = state.inputBuffer.slice(0, -1); updateDisplays(); return; }
 
     switch (key) {
       case 'Q': handleSideButton('L1'); break;
       case 'A': handleSideButton('L2'); break;
       case 'Z': handleSideButton('L3'); break;
-      case 'W': handleSideButton('L4'); break; // BOTÓN W = ACEPTAR
+      case 'W': handleSideButton('L4'); break;
       case 'E': handleSideButton('R1'); break;
       case 'D': handleSideButton('R2'); break;
       case 'C': handleSideButton('R3'); break;
-      case 'R': handleSideButton('R4'); break; // BOTÓN R = CANCELAR / COMENZAR
+      case 'R': handleSideButton('R4'); break;
     }
   });
 
-  function handleSideButton(btn) {
-    // 1. Pantalla de Bienvenida (Video en bucle)
+  function clearWarnings() { document.querySelectorAll('.warning-msg').forEach(el => el.innerText = ''); }
+
+  function handleNumberInput(num) {
     if (state.currentScreen === 'welcome') {
-      if (btn === 'R4') { // Botón R para comenzar
+      state.inputBuffer = num;
+      showScreen('dni');
+    } else if (['dni', 'pin', 'extrac-monto', 'transf-dni', 'transf-monto', 'cambio-pin'].includes(state.currentScreen)) {
+      if (['pin', 'cambio-pin'].includes(state.currentScreen) && state.inputBuffer.length >= 4) return;
+      if (state.currentScreen === 'dni' && state.inputBuffer.length >= 8) return;
+      state.inputBuffer += num;
+    }
+    updateDisplays();
+  }
+
+  function updateDisplays() {
+    if (state.currentScreen === 'dni') document.getElementById('dni-display').innerText = state.inputBuffer || '_';
+    if (state.currentScreen === 'pin') document.getElementById('pin-display').innerText = '*'.repeat(state.inputBuffer.length) || '_';
+    if (state.currentScreen === 'extrac-monto') document.getElementById('extrac-monto-display').innerText = '$ ' + (state.inputBuffer || '_');
+    if (state.currentScreen === 'transf-dni') document.getElementById('transf-dni-display').innerText = state.inputBuffer || '_';
+    if (state.currentScreen === 'transf-monto') document.getElementById('transf-monto-display').innerText = '$ ' + (state.inputBuffer || '_');
+    if (state.currentScreen === 'cambio-pin') document.getElementById('newpin-display').innerText = '*'.repeat(state.inputBuffer.length) || '_';
+  }
+
+  function handleSideButton(btn) {
+    clearWarnings();
+
+    if (state.currentScreen === 'welcome') {
+      if (btn === 'R4') {
         const video = document.getElementById('bg-video');
         if (video) video.pause();
+        state.inputBuffer = '';
         showScreen('dni');
+        updateDisplays();
       }
       return;
     }
 
-    // 2. Pantalla de Selección de DNI por Botones Laterales
     if (state.currentScreen === 'dni') {
-      if (btn === 'L1') setDniSelection('48123456');
-      if (btn === 'L2') setDniSelection('48987654');
-      if (btn === 'L3') setDniSelection('49111222');
-      if (btn === 'R1') setDniSelection('49333444');
-      if (btn === 'R2') setDniSelection('47555666');
-
-      if (btn === 'L4') { // [W] Aceptar selección
-        processSelectedDni(state.selectedDni);
+      if (btn === 'L4') {
+        if (state.inputBuffer.length < 7) {
+          document.getElementById('dni-warning').innerText = "⚠️ Ingrese un DNI válido (mínimo 7 dígitos)";
+          return;
+        }
+        processDniLookup(state.inputBuffer);
+        state.inputBuffer = '';
+        showScreen('pin');
+        updateDisplays();
       }
-
-      if (btn === 'R4' || btn === 'R3') { // [R] Cancelar o Ingresar como Visitante
-        processSelectedDni('GUEST');
-      }
+      if (btn === 'R4') resetATM();
       return;
     }
 
-    // 3. Pantalla de Información / Respuestas
-    if (state.currentScreen === 'info') {
-      if (btn === 'L4' || btn === 'R4') { // [W] Aceptar o [R] Cancelar vuelven al menú
+    if (state.currentScreen === 'pin') {
+      if (btn === 'L4') {
+        if (state.inputBuffer.length < 1) {
+          document.getElementById('pin-warning').innerText = "⚠️ Ingrese su clave PIN de 4 dígitos";
+          return;
+        }
+        state.inputBuffer = '';
+        if (state.isAlumno) {
+          document.getElementById('greeting-alumno').innerText = `👋 Bienvenido/a: ${state.user.nombre.toUpperCase()} ${state.user.apellido.toUpperCase()} (${state.user.curso})`;
+        }
+        saveSession();
         showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
       }
+      if (btn === 'R4') resetATM();
       return;
     }
 
-    // 4. Menú de Alumnos Registrados
+    if (state.currentScreen === 'extrac-monto') {
+      if (btn === 'L4') {
+        const monto = parseInt(state.inputBuffer) || 0;
+        if (monto <= 0) { document.getElementById('extrac-warning').innerText = "⚠️ Ingrese un monto válido a retirar"; return; }
+        state.inputBuffer = '';
+        if (monto > state.saldo) {
+          showInfo("⚠️ OPERACIÓN RECHAZADA", `Saldo insuficiente.<br><br><b>Monto solicitado:</b> $${monto.toLocaleString()}<br><b>Saldo disponible:</b> $${state.saldo.toLocaleString()}`);
+        } else {
+          state.saldo -= monto;
+          saveSession();
+          showInfo("💵 EXTRACCIÓN EXITOSA", `Se han retirado <b>$${monto.toLocaleString()}</b> correctamente.<br><br>Saldo restante: <b style="color:#00f0ff;">$${state.saldo.toLocaleString()}</b>`);
+        }
+      }
+      if (btn === 'R4') showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
+      return;
+    }
+
+    if (state.currentScreen === 'transf-dni') {
+      if (btn === 'L4') {
+        if (state.inputBuffer.length < 7) { document.getElementById('transf-dni-warning').innerText = "⚠️ Ingrese el DNI del destinatario (mínimo 7 dígitos)"; return; }
+        const destFound = alumnos.find(a => a.dni === state.inputBuffer);
+        state.transfDestName = destFound ? `${destFound.nombre} ${destFound.apellido} (${destFound.curso})` : `CBU / Cta. Externa N° ${state.inputBuffer}`;
+        document.getElementById('transf-dest-title').innerText = "Destinatario: " + state.transfDestName;
+        state.inputBuffer = '';
+        showScreen('transf-monto');
+        updateDisplays();
+      }
+      if (btn === 'R4') showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
+      return;
+    }
+
+    if (state.currentScreen === 'transf-monto') {
+      if (btn === 'L4') {
+        const monto = parseInt(state.inputBuffer) || 0;
+        if (monto <= 0) { document.getElementById('transf-monto-warning').innerText = "⚠️ Ingrese un monto válido a transferir"; return; }
+        state.inputBuffer = '';
+        if (monto > state.saldo) {
+          showInfo("⚠️ OPERACIÓN RECHAZADA", `Saldo insuficiente.<br><br><b>Monto solicitado:</b> $${monto.toLocaleString()}<br><b>Saldo disponible:</b> $${state.saldo.toLocaleString()}`);
+        } else {
+          state.saldo -= monto;
+          saveSession();
+          showInfo("✅ TRANSFERENCIA EXITOSA", `Se han transferido <b>$${monto.toLocaleString()}</b> a:<br><b>${state.transfDestName}</b>.<br><br>Nuevo Saldo: <b style="color:#00f0ff;">$${state.saldo.toLocaleString()}</b>`);
+        }
+      }
+      if (btn === 'R4') showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
+      return;
+    }
+
+    if (state.currentScreen === 'cambio-pin') {
+      if (btn === 'L4') {
+        if (state.inputBuffer.length < 4) { document.getElementById('pin-change-warning').innerText = "⚠️ Debe ingresar una clave de 4 dígitos"; return; }
+        state.inputBuffer = '';
+        showInfo("🔒 CAMBIO DE PIN", "¡Su clave PIN se ha actualizado con éxito!");
+      }
+      if (btn === 'R4') showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
+      return;
+    }
+
+    if (state.currentScreen === 'info') {
+      if (btn === 'L4' || btn === 'R4') showScreen(state.isAlumno ? 'menu-alumno' : 'menu-visitante');
+      return;
+    }
+
     if (state.currentScreen === 'menu-alumno') {
       if (btn === 'L1') showInfo("CONSULTA DE SALDO", `Hola <b>${state.user.nombre} ${state.user.apellido}</b><br>${state.user.curso}<br><br>Saldo disponible: <b style="color:#00f0ff; font-size:26px;">$${state.saldo.toLocaleString()}</b>`);
-      if (btn === 'L2') {
-        state.saldo -= 5000;
-        showInfo("EXTRACCIÓN RÁPIDA", `Extracción de <b>$5.000</b> realizada con éxito.<br><br>Saldo restante: <b style="color:#00f0ff;">$${state.saldo.toLocaleString()}</b>`);
-      }
-      if (btn === 'L3') showInfo("TRANSFERENCIA SIMULADA", `Transferencia de $2.000 realizada a Sofía Martínez (1er Año A).`);
+      if (btn === 'L2') { state.inputBuffer = ''; showScreen('extrac-monto'); updateDisplays(); }
+      if (btn === 'L3') { state.inputBuffer = ''; showScreen('transf-dni'); updateDisplays(); }
       if (btn === 'L4') showInfo("PERFIL DEL ALUMNO", `<b>Alumno:</b> ${state.user.nombre} ${state.user.apellido}<br><b>Curso:</b> ${state.user.curso}<br><b>Estado:</b> Cliente Activo eBANK.`);
-      if (btn === 'R1') showInfo("CAMBIO DE PIN", "Su clave PIN se ha actualizado correctamente.");
-      if (btn === 'R2') showInfo("PUNTOS ESCOLARES", "Puntos acumulados: <b style="color:#00b4d8;">450 Pts</b>");
-      if (btn === 'R4') resetATM(); // [R] Salir
+      if (btn === 'R1') { state.inputBuffer = ''; showScreen('cambio-pin'); updateDisplays(); }
+      if (btn === 'R2') showInfo("PUNTOS ESCOLARES", `Puntos acumulados: <b style="color:#00b4d8;">450 Pts</b>`);
+      if (btn === 'R4') resetATM();
       return;
     }
 
-    // 5. Menú de Visitantes / Padres
     if (state.currentScreen === 'menu-visitante') {
       if (btn === 'L1') showInfo("SALDO DEMO", `Estimado Visitante:<br>Se le ha asignado un Saldo Demo de: <b style="color:#00f0ff;">$50.000</b>`);
-      if (btn === 'L2') showInfo("DEMO EXTRACCIÓN", `Ha simulado retirar $5.000.<br>Retire su comprobante ficticio.`);
-      if (btn === 'L3') showInfo("DEMO TRANSFERENCIA", `Simulación de envío de dinero completada.`);
-      if (btn === 'L4') resetATM(); // [W] Volver
+      if (btn === 'L2') { state.inputBuffer = ''; showScreen('extrac-monto'); updateDisplays(); }
+      if (btn === 'L3') { state.inputBuffer = ''; showScreen('transf-dni'); updateDisplays(); }
+      if (btn === 'L4') resetATM();
 
-      if (btn === 'R1') showInfo("EMPRESAS QUE CONFIAN EN NOSOTROS", `• Kiosco Escolar<br>• Librería San Diego<br>• Cooperativa de 2° Año<br>• Polideportivo Municipal`);
-      if (btn === 'R2') showInfo("¿CÓMO SE HIZO EL PROYECTO?", `<b>Hardware:</b> ESP32 y Monitor Reciclado.<br><b>Software:</b> HTML5, CSS3, JavaScript.<br>Proyecto integrado de Economía y Tecnología.`);
-      if (btn === 'R3') showInfo("PARTICIPANTES", `<b>Docentes:</b> Equipo de Economía y Tecnología.<br><b>Alumnos:</b> 1er y 2do Año Secundario.`);
-      if (btn === 'R4') showInfo("INFORMACIÓN INSTITUCIONAL", `<b>Instituto San Diego</b><br>EXPO Técno Contable 2026<br>Orientación en Economía y Administración.`);
+      // Redirecciones con la sesión activa preservada
+      if (btn === 'R1') window.location.href = "empresas.html";
+      if (btn === 'R2') window.location.href = "como_se_hizo.html";
+      if (btn === 'R3') window.location.href = "participantes.html";
+      if (btn === 'R4') window.location.href = "info_institucional.html";
     }
   }
 
-  function setDniSelection(dni) {
-    state.selectedDni = dni;
-    document.getElementById('dni-display').innerText = dni;
-  }
-
-  function processSelectedDni(dni) {
+  function processDniLookup(dni) {
     const found = alumnos.find(a => a.dni === dni);
     state.saldo = Math.floor(Math.random() * 75000) + 10000;
-
-    if (found) {
-      state.user = found;
-      state.isAlumno = true;
-      showScreen('menu-alumno');
-    } else {
-      state.user = { nombre: "Visitante", apellido: "Invitado" };
-      state.isAlumno = false;
-      showScreen('menu-visitante');
-    }
+    state.user = found || { nombre: "Visitante", apellido: "Invitado" };
+    state.isAlumno = !!found;
+    saveSession();
   }
 
   function showInfo(title, content) {
@@ -416,7 +616,10 @@
 
   function showScreen(screenName) {
     state.currentScreen = screenName;
-    document.querySelectorAll('.atm-container > .menu-grid, .atm-container > .content-body').forEach(el => el.classList.add('hidden'));
+    clearWarnings();
+    resetInactivityTimer();
+
+    document.querySelectorAll('.atm-container > .menu-grid, .atm-container > div[id^="screen-"]').forEach(el => el.classList.add('hidden'));
     
     const target = document.getElementById(`screen-${screenName}`);
     if (target) target.classList.remove('hidden');
@@ -428,8 +631,13 @@
   }
 
   function resetATM() {
+    sessionStorage.removeItem('ebank_session');
+    clearTimeout(inactivityTimer);
+    state.inputBuffer = '';
     state.user = null;
     state.isAlumno = false;
+    clearWarnings();
+    updateDisplays();
     showScreen('welcome');
   }
 </script>

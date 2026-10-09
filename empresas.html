@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empresas Aliadas - eBANK</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
+    .atm-container {
+      width: 980px; height: 620px;
+      background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
+      border: 10px solid #1c2d5a; border-radius: 18px;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
+      box-shadow: 0 0 40px rgba(0, 102, 255, 0.3); position: relative;
+    }
+
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e63946; padding: 8px 15px; background: rgba(10, 20, 45, 0.6); border-radius: 8px; }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .school-logo { height: 45px; width: auto; object-fit: contain; }
+    .brand-title { font-size: 26px; font-weight: 800; color: #ffffff; }
+    .brand-title span { color: #e63946; }
+    .subtitle { font-size: 12px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
+
+    .menu-grid { width: 100%; display: flex; justify-content: space-between; align-items: stretch; flex-grow: 1; padding: 10px 0; }
+    .menu-column { width: 36%; display: flex; flex-direction: column; justify-content: space-around; }
+    .left-col { text-align: left; }
+    .right-col { text-align: right; }
+
+    .btn-label {
+      font-size: 15px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff;
+      padding: 10px 14px; border-left: 5px solid #00b4d8; border-radius: 6px; margin: 4px 0;
+    }
+    .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
+    .btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
+    .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
+
+    .content-center { width: 26%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+    /* Modal emergente del Video */
+    .video-modal {
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      background: #060d1f;
+      border: 3px solid #00b4d8;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .promo-video { width: 100%; height: 520px; object-fit: cover; border-radius: 8px; border: 1px solid #1c2d5a; }
+
+    .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 13px; color: #94a3b8; }
+    .hidden { display: none !important; }
+    .badge { background: #e63946; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="atm-container">
+  <div class="header">
+    <div class="header-left">
+      <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-title">e<span>BANK</span></div>
+        <div class="subtitle">Empresas Aliadas</div>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="badge">MUESTRA 2026</span>
+      <div class="subtitle" style="margin-top: 4px; color: #00b4d8;">EXPO Técno Contable</div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-column left-col">
+      <div id="btn-emp-1" class="btn-label">&lt; 1. Kiosco Escolar</div>
+      <div id="btn-emp-2" class="btn-label">&lt; 2. Librería San Diego</div>
+      <div id="btn-emp-3" class="btn-label">&lt; 3. Cooperativa 2° Año</div>
+      <div class="btn-label btn-action-w" id="btn-nav-prev">&lt; PAG. ANTERIOR</div>
+    </div>
+
+    <!-- Zona Central de Instrucciones -->
+    <div class="content-center">
+      <h3 style="font-size: 18px; color: #00b4d8; margin-bottom: 10px;">EMPRESAS QUE CONFIAN EN NOSOTROS</h3>
+      <p style="font-size: 13px; color: #a0aec0; line-height: 1.5;">
+        Presione el botón lateral de la empresa para ver su video de presentación.
+      </p>
+      <p id="page-indicator" style="font-size: 12px; color: #00f0ff; margin-top: 15px; font-weight: bold;">Página 1 de 2</p>
+    </div>
+
+    <div class="menu-column right-col">
+      <div id="btn-emp-4" class="btn-label">4. Polideportivo &gt;</div>
+      <div id="btn-emp-5" class="btn-label">5. Imprenta Central &gt;</div>
+      <div id="btn-emp-6" class="btn-label">6. Panadería El Sol &gt;</div>
+      <div class="btn-label btn-action-r" id="btn-nav-next">PAG. SIGUIENTE &gt;</div>
+    </div>
+  </div>
+
+  <!-- Modal de Video (Oculto por defecto) -->
+  <div id="video-modal" class="video-modal hidden">
+    <h4 id="modal-title" style="color: #00f0ff; margin-bottom: 10px; font-size: 16px;">Nombre Empresa</h4>
+    <video id="company-video" class="promo-video" playsinline>
+      <source src="Empresa 1.mp4" type="video/mp4">
+    </video>
+    <p style="font-size: 12px; color: #e63946; margin-top: 10px; font-weight: bold;">Presione cualquier botón para cerrar</p>
+  </div>
+
+  <div class="footer">
+    <span>Seleccione una empresa en los botones laterales para reproducir su video institucional</span>
+  </div>
+</div>
+
+<script>
+  const paginasEmpresas = [
+    [
+      { id: 1, nombre: "Kiosco Escolar", video: "Empresa 1.mp4" },
+      { id: 2, nombre: "Librería San Diego", video: "Empresa 1.mp4" },
+      { id: 3, nombre: "Cooperativa 2° Año", video: "Empresa 1.mp4" },
+      { id: 4, nombre: "Polideportivo Municipal", video: "Empresa 1.mp4" },
+      { id: 5, nombre: "Imprenta Central", video: "Empresa 1.mp4" },
+      { id: 6, nombre: "Panadería El Sol", video: "Empresa 1.mp4" }
+    ],
+    [
+      { id: 7, nombre: "Farmacia del Centro", video: "Empresa 1.mp4" },
+      { id: 8, nombre: "Supermercado Bicentenario", video: "Empresa 1.mp4" },
+      { id: 9, nombre: "Transporte Escolar Express", video: "Empresa 1.mp4" },
+      { id: 10, nombre: "Informática & Tecnología", video: "Empresa 1.mp4" },
+      { id: 11, nombre: "Indumentaria Escolar", video: "Empresa 1.mp4" },
+      { id: 12, nombre: "Heladería San Diego", video: "Empresa 1.mp4" }
+    ]
+  ];
+
+  let currentPage = 0;
+  let inactivityTimer = null;
+  let isVideoPlaying = false;
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    if (!isVideoPlaying) {
+      inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, 60000);
+    }
+  }
+
+  function updateView() {
+    const empresas = paginasEmpresas[currentPage];
+    document.getElementById('page-indicator').innerText = `Página ${currentPage + 1} de ${paginasEmpresas.length}`;
+
+    document.getElementById('btn-emp-1').innerHTML = `&lt; 1. ${empresas[0]?.nombre || '---'}`;
+    document.getElementById('btn-emp-2').innerHTML = `&lt; 2. ${empresas[1]?.nombre || '---'}`;
+    document.getElementById('btn-emp-3').innerHTML = `&lt; 3. ${empresas[2]?.nombre || '---'}`;
+    document.getElementById('btn-emp-4').innerHTML = `${empresas[3]?.nombre || '---'} &gt;`;
+    document.getElementById('btn-emp-5').innerHTML = `${empresas[4]?.nombre || '---'} &gt;`;
+    document.getElementById('btn-emp-6').innerHTML = `${empresas[5]?.nombre || '---'} &gt;`;
+
+    if (currentPage === paginasEmpresas.length - 1) {
+      document.getElementById('btn-nav-next').innerHTML = `VOLVER AL MENÚ &gt;`;
+    } else {
+      document.getElementById('btn-nav-next').innerHTML = `PAG. SIGUIENTE &gt;`;
+    }
+  }
+
+  function openVideoModal(index) {
+    const comp = paginasEmpresas[currentPage][index];
+    if (!comp) return;
+
+    isVideoPlaying = true;
+    clearTimeout(inactivityTimer); // Pausa el temporizador de inactividad mientras corre el video
+
+    document.getElementById('modal-title').innerText = comp.nombre;
+    const modal = document.getElementById('video-modal');
+    const video = document.getElementById('company-video');
+    
+    video.src = comp.video;
+    modal.classList.remove('hidden');
+    video.play();
+
+    // Cuando el video finaliza de forma natural, se cierra el modal solo
+    video.onended = () => {
+      closeVideoModal();
+    };
+  }
+
+  function closeVideoModal() {
+    const modal = document.getElementById('video-modal');
+    const video = document.getElementById('company-video');
+    video.pause();
+    modal.classList.add('hidden');
+    isVideoPlaying = false;
+    resetInactivityTimer(); // Reactiva el temporizador de inactividad
+  }
+
+  document.addEventListener('keydown', (e) => {
+    // Si el video está en reproducción, cualquier botón cierra el modal
+    if (isVideoPlaying) {
+      closeVideoModal();
+      return;
+    }
+
+    resetInactivityTimer();
+    const key = e.key.toUpperCase();
+
+    switch (key) {
+      case 'Q': openVideoModal(0); break;
+      case 'A': openVideoModal(1); break;
+      case 'Z': openVideoModal(2); break;
+      case 'E': openVideoModal(3); break;
+      case 'D': openVideoModal(4); break;
+      case 'C': openVideoModal(5); break;
+      
+      case 'W':
+        if (currentPage > 0) {
+          currentPage--;
+          updateView();
+        } else {
+          window.location.href = "index.html";
+        }
+        break;
+
+      case 'R':
+        if (currentPage < paginasEmpresas.length - 1) {
+          currentPage++;
+          updateView();
+        } else {
+          window.location.href = "index.html";
+        }
+        break;
+    }
+  });
+
+  updateView();
+  resetInactivityTimer();
+</script>
+</body>
+</html>
