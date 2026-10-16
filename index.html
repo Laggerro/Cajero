@@ -47,7 +47,7 @@
     
     .brand-title { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 1px; }
     .brand-title span { color: #e63946; }
-    .subtitle { font-size: 12px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
+    .subtitle { padding-right: 15px;; font-size: 16px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
 
     .user-greeting-banner {
       width: 100%;
@@ -66,7 +66,7 @@
     .user-greeting-banner.guest {
       background: rgba(230, 57, 70, 0.15);
       border-color: #e63946;
-      color: #ff8892;
+      color: #ffffff;
     }
 
     .content-body {
@@ -80,18 +80,18 @@
     }
 
     .video-container {
-      width: 100%;
-      max-width: 650px;
-      height: 330px;
+      width: 150%;
+      max-width: 850px;
+      height: 360px;
       background: #000;
       border: 3px solid #00b4d8;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-      margin-bottom: 10px;
+      margin-bottom: 55px;
     }
 
-    .promo-video { width: 100%; height: 100%; object-fit: cover; }
+    .promo-video { width: 100%; height: 100%; object-fit: contain; }
 
     .menu-grid {
       width: 100%;
@@ -157,7 +157,7 @@
     .warning-msg { color: #e63946; font-weight: bold; font-size: 15px; margin-top: 8px; min-height: 22px; }
     .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; font-size: 13px; color: #94a3b8; }
     .hidden { display: none !important; }
-    .badge { background: #e63946; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+    .badge { color: #fff; padding: 0px 0px; border-radius: 4px; font-size: 18px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -169,11 +169,11 @@
       <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
       <div>
         <div class="brand-title">e<span>BANK</span></div>
-        <div class="subtitle">Banco Escolar Simulado</div>
+        <div class="subtitle">SIMULADOR de CAJERO</div>
       </div>
     </div>
     <div style="text-align: right;">
-      <span class="badge">MUESTRA 2026</span>
+      <span class="badge">Departamento Economía</span>
       <div class="subtitle" style="margin-top: 4px; color: #00b4d8;">EXPO Técno Contable</div>
     </div>
   </div>
@@ -189,11 +189,11 @@
 
     <div class="content-body" style="padding: 0 10px;">
       <div class="video-container">
-        <video id="bg-video" class="promo-video" autoplay loop muted playsinline>
+        <video id="bg-video" class="promo-video" autoplay loop playsinline>
           <source src="presentacion.mp4" type="video/mp4">
         </video>
       </div>
-      <p style="font-size: 15px; color: #a0aec0;">Presione el botón lateral para comenzar</p>
+       <!-- <p style="font-size: 15px; color: #a0aec0;">Presione el botón lateral para comenzar</p> -->
     </div>
 
     <div class="menu-column right-col" style="justify-content: flex-end;">
@@ -365,7 +365,8 @@
   </div>
 
   <div class="footer">
-    <span id="footer-text">Seleccione una opción presionando los botones laterales</span>
+    <span id="footer-text">Seleccione una opción presionando los botones laterales</br></span>
+    <span id="footer-text">@Laggersoft</span>
   </div>
 </div>
 
