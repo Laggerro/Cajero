@@ -9,7 +9,8 @@
     body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
     .atm-container {
-      width: 980px; height: 620px;
+     width: 1080px;
+      height: 720px;
       background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
       border: 10px solid #1c2d5a; border-radius: 18px;
       display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
@@ -68,7 +69,7 @@
 <div class="atm-container">
   <div class="header">
     <div class="header-left">
-      <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+      <img src="assets/images/logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
       <div>
         <div class="brand-title">e<span>BANK</span></div>
         <div class="subtitle">Empresas Aliadas</div>
@@ -109,7 +110,7 @@
   <div id="video-modal" class="video-modal hidden">
     <h4 id="modal-title" style="color: #00f0ff; margin-bottom: 10px; font-size: 16px;">Nombre Empresa</h4>
     <video id="company-video" class="promo-video" playsinline>
-      <source src="Empresa 1.mp4" type="video/mp4">
+      <source src="assets/videos/Empresa 1.mp4" type="video/mp4">
     </video>
     <p style="font-size: 12px; color: #e63946; margin-top: 10px; font-weight: bold;">Presione cualquier botón para cerrar</p>
   </div>
@@ -122,20 +123,20 @@
 <script>
   const paginasEmpresas = [
     [
-      { id: 1, nombre: "Kiosco Escolar", video: "Empresa 1.mp4" },
-      { id: 2, nombre: "Librería San Diego", video: "Empresa 1.mp4" },
-      { id: 3, nombre: "Cooperativa 2° Año", video: "Empresa 1.mp4" },
-      { id: 4, nombre: "Polideportivo Municipal", video: "Empresa 1.mp4" },
-      { id: 5, nombre: "Imprenta Central", video: "Empresa 1.mp4" },
-      { id: 6, nombre: "Panadería El Sol", video: "Empresa 1.mp4" }
+      { id: 1, nombre: "Kiosco Escolar", video: "assets/videos/Empresa 1.mp4" },
+      { id: 2, nombre: "Librería San Diego", video: "assets/videos/Empresa 1.mp4" },
+      { id: 3, nombre: "Cooperativa 2° Año", video: "assets/videos/Empresa 1.mp4" },
+      { id: 4, nombre: "Polideportivo Municipal", video: "assets/videos/Empresa 1.mp4" },
+      { id: 5, nombre: "Imprenta Central", video: "assets/videos/Empresa 1.mp4" },
+      { id: 6, nombre: "Panadería El Sol", video: "assets/videos/Empresa 1.mp4" }
     ],
     [
-      { id: 7, nombre: "Farmacia del Centro", video: "Empresa 1.mp4" },
-      { id: 8, nombre: "Supermercado Bicentenario", video: "Empresa 1.mp4" },
-      { id: 9, nombre: "Transporte Escolar Express", video: "Empresa 1.mp4" },
-      { id: 10, nombre: "Informática & Tecnología", video: "Empresa 1.mp4" },
-      { id: 11, nombre: "Indumentaria Escolar", video: "Empresa 1.mp4" },
-      { id: 12, nombre: "Heladería San Diego", video: "Empresa 1.mp4" }
+      { id: 7, nombre: "Farmacia del Centro", video: "assets/videos/Empresa 1.mp4" },
+      { id: 8, nombre: "Supermercado Bicentenario", video: "assets/videos/Empresa 1.mp4" },
+      { id: 9, nombre: "Transporte Escolar Express", video: "assets/videos/Empresa 1.mp4" },
+      { id: 10, nombre: "Informática & Tecnología", video: "assets/videos/Empresa 1.mp4" },
+      { id: 11, nombre: "Indumentaria Escolar", video: "assets/videos/Empresa 1.mp4" },
+      { id: 12, nombre: "Heladería San Diego", video: "assets/videos/Empresa 1.mp4" }
     ]
   ];
 

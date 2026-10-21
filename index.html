@@ -18,8 +18,8 @@
     }
 
     .atm-container {
-      width: 980px;
-      height: 620px;
+      width: 1080px;
+      height: 720px;
       background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
       border: 10px solid #1c2d5a;
       border-radius: 18px;
@@ -166,7 +166,7 @@
   
   <div class="header">
     <div class="header-left">
-      <img src="logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+      <img src="assets/images/logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
       <div>
         <div class="brand-title">e<span>BANK</span></div>
         <div class="subtitle">SIMULADOR de CAJERO</div>
@@ -190,7 +190,7 @@
     <div class="content-body" style="padding: 0 10px;">
       <div class="video-container">
         <video id="bg-video" class="promo-video" autoplay loop playsinline>
-          <source src="presentacion.mp4" type="video/mp4">
+          <source src="assets/videos/presentacion.mp4" type="video/mp4">
         </video>
       </div>
        <!-- <p style="font-size: 15px; color: #a0aec0;">Presione el botón lateral para comenzar</p> -->
@@ -424,23 +424,34 @@
     }
   }
 
+  const sideButtonByCode = {
+    KeyQ: 'L1',
+    KeyA: 'L2',
+    KeyZ: 'L3',
+    KeyW: 'L4',
+    KeyE: 'R1',
+    KeyD: 'R2',
+    KeyC: 'R3',
+    KeyR: 'R4'
+  };
+
   document.addEventListener('keydown', (e) => {
-    resetInactivityTimer();
-    const key = e.key.toUpperCase();
-    clearWarnings();
+    if (e.repeat) return;
 
-    if (!isNaN(key) && key !== ' ') { handleNumberInput(key); return; }
-    if (e.key === 'Backspace') { state.inputBuffer = state.inputBuffer.slice(0, -1); updateDisplays(); return; }
+    const sideButton = sideButtonByCode[e.code];
+    if (sideButton) {
+      e.preventDefault();
+      resetInactivityTimer();
+      clearWarnings();
+      handleSideButton(sideButton);
+      return;
+    }
 
-    switch (key) {
-      case 'Q': handleSideButton('L1'); break;
-      case 'A': handleSideButton('L2'); break;
-      case 'Z': handleSideButton('L3'); break;
-      case 'W': handleSideButton('L4'); break;
-      case 'E': handleSideButton('R1'); break;
-      case 'D': handleSideButton('R2'); break;
-      case 'C': handleSideButton('R3'); break;
-      case 'R': handleSideButton('R4'); break;
+    if (/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      resetInactivityTimer();
+      clearWarnings();
+      handleNumberInput(e.key);
     }
   });
 
