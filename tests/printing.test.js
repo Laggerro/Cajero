@@ -5,14 +5,41 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const { buildWelcomeTicket, createPrintServer, validateTicketData } = require('../server');
+const testConfig = {
+  atmWidth: 1080,
+  atmHeight: 720,
+  videoWidth: 850,
+  videoHeight: 360,
+  sideColumnWidth: 38,
+  buttonGap: 80,
+  buttonTopMargin: 0,
+  buttonFontSize: 16,
+  buttonHeight: 48,
+  contentTextFontSize: 16,
+  amountFontSize: 36,
+  inactivitySeconds: 60,
+  processCarouselIntervalSeconds: 6,
+  participantsCarouselIntervalSeconds: 3,
+  carouselPauseSeconds: 10,
+  carouselInactivitySeconds: 60,
+  processCarouselWidth: 100,
+  processCarouselHeight: 330,
+  participantsCarouselWidth: 100,
+  participantsCarouselHeight: 280
+};
 
-function requestJson(port, { origin = 'http://localhost', body = {} } = {}) {
+function requestJson(port, {
+  origin = 'http://localhost',
+  method = 'POST',
+  path = '/api/tickets',
+  body = {}
+} = {}) {
   return new Promise((resolve, reject) => {
     const request = http.request({
       host: '127.0.0.1',
       port,
-      method: 'POST',
-      path: '/api/tickets',
+      method,
+      path,
       headers: {
         Host: `127.0.0.1:${port}`,
         Origin: origin,
@@ -29,7 +56,7 @@ function requestJson(port, { origin = 'http://localhost', body = {} } = {}) {
       });
     });
     request.on('error', reject);
-    request.end(JSON.stringify(body));
+    request.end(method === 'GET' ? undefined : JSON.stringify(body));
   });
 }
 
@@ -70,6 +97,43 @@ test('ticket data accepts only a seven- or eight-digit DNI', () => {
   assert.throws(() => validateTicketData({ dni: '123' }), /DNI debe/);
   assert.throws(() => validateTicketData({ dni: '12345678', name: 'No se acepta' }), /solo debe incluir el DNI/);
   assert.deepEqual(validateTicketData({ dni: '48123456' }), { dni: '48123456' });
+});
+
+test('shared cajero configuration is persisted as JSON and validates values', async (t) => {
+  const temporaryDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'ebank-config-test-'));
+  const configPath = path.join(temporaryDirectory, 'cajero-config.json');
+  const server = await startTestServer({
+    configPath,
+    allowedOrigins: ['http://localhost'],
+    logError: () => {},
+    print: async () => {}
+  });
+  t.after(async () => {
+    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  });
+
+  const missing = await requestJson(server.address().port, { method: 'GET', path: '/api/config' });
+  assert.deepEqual(missing, { statusCode: 200, body: { config: null } });
+
+  const updatedConfig = { ...testConfig, atmWidth: 1200 };
+  const saved = await requestJson(server.address().port, {
+    path: '/api/config',
+    body: updatedConfig
+  });
+  const loaded = await requestJson(server.address().port, { method: 'GET', path: '/api/config' });
+  const stored = JSON.parse(await fs.readFile(configPath, 'utf8'));
+
+  assert.deepEqual(saved, { statusCode: 200, body: { ok: true, config: updatedConfig } });
+  assert.deepEqual(loaded, { statusCode: 200, body: { config: updatedConfig } });
+  assert.deepEqual(stored, updatedConfig);
+
+  const invalid = await requestJson(server.address().port, {
+    path: '/api/config',
+    body: { ...testConfig, atmWidth: 10 }
+  });
+  assert.equal(invalid.statusCode, 400);
+  assert.deepEqual(JSON.parse(await fs.readFile(configPath, 'utf8')), updatedConfig);
 });
 
 test('ticket numbers stay unique across concurrent service instances', async (t) => {
@@ -148,6 +212,53 @@ test('each DNI can only reserve and print one ticket, even concurrently', async 
   });
   assert.equal(laterAttempt.statusCode, 409);
   assert.equal(printedTickets.length, 1);
+});
+
+test('reprinting a used DNI keeps its assigned ticket number', async (t) => {
+  const temporaryDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'ebank-print-reprint-test-'));
+  const counterPath = path.join(temporaryDirectory, 'counter.json');
+  const studentsPath = path.join(temporaryDirectory, 'alumnos.json');
+  await fs.writeFile(studentsPath, JSON.stringify([
+    { dni: '48123456', nombre: 'Lucas', apellido: 'González' }
+  ]));
+  const printedTickets = [];
+  const server = await startTestServer({
+    counterPath,
+    studentsPath,
+    allowedOrigins: ['http://localhost'],
+    logError: () => {},
+    print: async (ticket) => printedTickets.push(ticket.toString('latin1'))
+  });
+  t.after(async () => {
+    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  });
+
+  const original = await requestJson(server.address().port, { body: { dni: '48123456' } });
+  const reprint = await requestJson(server.address().port, {
+    path: '/api/tickets/reprint',
+    body: { dni: '48123456' }
+  });
+  const nextTicket = await requestJson(server.address().port, { body: { dni: '12345678' } });
+  const assignedTickets = await requestJson(server.address().port, {
+    method: 'GET',
+    path: '/api/tickets/used'
+  });
+
+  assert.equal(original.statusCode, 200);
+  assert.deepEqual(reprint, {
+    statusCode: 200,
+    body: { ok: true, reprinted: true, ticketNumber: original.body.ticketNumber }
+  });
+  assert.equal(nextTicket.body.ticketNumber, original.body.ticketNumber + 1);
+  assert.deepEqual(assignedTickets.body.usedDnis, [
+    { dni: '48123456', ticketNumber: original.body.ticketNumber },
+    { dni: '12345678', ticketNumber: nextTicket.body.ticketNumber }
+  ]);
+  assert.equal(printedTickets.length, 3);
+  assert.equal(printedTickets[0].match(/NRO\. CORRELATIVO: 000001/) !== null, true);
+  assert.equal(printedTickets[1].match(/NRO\. CORRELATIVO: 000001/) !== null, true);
+  assert.match(printedTickets[1], /NOMBRE: Lucas González/);
 });
 
 test('a number reserved for a failed print is never reused', async (t) => {

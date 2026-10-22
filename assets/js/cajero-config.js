@@ -44,6 +44,8 @@
     participantsCarouselWidth: [30, 100],
     participantsCarouselHeight: [150, 700]
   };
+  const configServiceUrl = 'http://127.0.0.1:3037/api/config';
+  let sharedConfigPromise;
 
   function normalizeConfig(values) {
     const source = values && typeof values === 'object' ? values : {};
@@ -113,6 +115,32 @@
     return config;
   };
 
+  window.loadSharedCajeroConfig = function () {
+    if (sharedConfigPromise) return sharedConfigPromise;
+
+    const localConfig = window.getCajeroConfig();
+    sharedConfigPromise = (async function () {
+      try {
+        const response = await fetch(configServiceUrl);
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Error del servicio (${response.status}).`);
+
+        if (result.config) {
+          const config = normalizeConfig(result.config);
+          window.saveCajeroConfig(config);
+          return { config, shared: true, error: null };
+        }
+
+        const config = await window.saveSharedCajeroConfig(localConfig);
+        return { config, shared: true, error: null };
+      } catch (error) {
+        console.error('No se pudo cargar la configuración compartida del cajero.', error);
+        return { config: localConfig, shared: false, error };
+      }
+    })();
+    return sharedConfigPromise;
+  };
+
   window.saveCajeroConfig = function (values) {
     const config = normalizeConfig(values);
     localStorage.setItem(storageKey, JSON.stringify(config));
@@ -120,8 +148,22 @@
     return config;
   };
 
+  window.saveSharedCajeroConfig = async function (values) {
+    const config = normalizeConfig(values);
+    const response = await fetch(configServiceUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `Error del servicio (${response.status}).`);
+
+    sharedConfigPromise = Promise.resolve({ config, shared: true, error: null });
+    return window.saveCajeroConfig(config);
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
-    window.getCajeroConfig();
+    window.loadSharedCajeroConfig();
   });
   window.addEventListener('resize', function () {
     window.getCajeroConfig();

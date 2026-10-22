@@ -65,6 +65,11 @@
     .back-link { background: #26395f; color: #ffffff; }
     button:hover, .back-link:hover { filter: brightness(1.12); }
     #status { min-height: 20px; color: #8df0d4; font-size: 14px; }
+    #ticket-status { min-height: 20px; color: #a0aec0; font-size: 14px; }
+    .records { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid #405782; }
+    .reprint-button { padding: 7px 10px; background: #e63946; color: #ffffff; }
     @media (max-width: 600px) {
       body { padding: 16px 10px; }
       main { padding: 20px 15px; }
@@ -75,7 +80,7 @@
 <body>
   <main>
     <h1>Configuración del cajero</h1>
-    <p class="intro">Ajustá el diseño y los tiempos del cajero. Los cambios se guardan en este navegador y se aplican también a las páginas de carruseles.</p>
+    <p class="intro">Ajustá el diseño y los tiempos del cajero. Los cambios se guardan en el archivo cajero-config.json para poder copiarlo a otra computadora. Node.js debe estar iniciado y esta página abierta desde http://localhost.</p>
 
     <form id="settings-form">
       <fieldset>
@@ -189,12 +194,30 @@
         <span id="status" role="status" aria-live="polite"></span>
       </div>
     </form>
+
+    <fieldset>
+      <legend>Tickets de rifa asignados</legend>
+      <p class="intro">Si alguien pierde su ticket, podés reimprimirlo con el mismo DNI y el mismo correlativo. Así no se crea otro número para esa participación.</p>
+      <div class="actions">
+        <button type="button" id="refresh-tickets">Actualizar lista</button>
+        <span id="ticket-status" role="status" aria-live="polite"></span>
+      </div>
+      <div class="records">
+        <table>
+          <thead><tr><th>DNI</th><th>N.º de ticket</th><th>Acción</th></tr></thead>
+          <tbody id="used-tickets"></tbody>
+        </table>
+      </div>
+    </fieldset>
   </main>
 
   <script>
     const form = document.getElementById('settings-form');
     const status = document.getElementById('status');
+    const ticketStatus = document.getElementById('ticket-status');
+    const usedTickets = document.getElementById('used-tickets');
     const fields = Array.from(form.elements).filter((element) => element.name);
+    const ticketServiceUrl = 'http://127.0.0.1:3037/api/tickets';
 
     function showConfig(config) {
       fields.forEach((field) => { field.value = config[field.name]; });
@@ -202,35 +225,117 @@
 
     showConfig(getCajeroConfig());
 
-    form.addEventListener('submit', (event) => {
+    loadSharedCajeroConfig().then(({ config, shared, error }) => {
+      showConfig(config);
+      if (shared) {
+        status.textContent = 'Configuración cargada desde cajero-config.json.';
+        status.style.color = '#8df0d4';
+      } else {
+        status.textContent = `No se pudo cargar el JSON compartido: ${error.message}. Se muestran los valores guardados en este navegador.`;
+        status.style.color = '#ff8892';
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!form.reportValidity()) return;
 
       const values = {};
       fields.forEach((field) => { values[field.name] = field.value; });
+      status.textContent = 'Guardando configuración en cajero-config.json...';
+      status.style.color = '#a0aec0';
       try {
-        showConfig(saveCajeroConfig(values));
-        status.textContent = 'Configuración guardada correctamente.';
+        showConfig(await saveSharedCajeroConfig(values));
+        status.textContent = 'Configuración guardada en cajero-config.json.';
         status.style.color = '#8df0d4';
       } catch (error) {
         console.error('No se pudo guardar la configuración del cajero.', error);
-        status.textContent = 'No se pudo guardar. Revisá los permisos de almacenamiento del navegador.';
+        status.textContent = `No se pudo guardar en el JSON: ${error.message}. Verificá que Node.js esté iniciado y abriste esta página desde http://localhost.`;
         status.style.color = '#ff8892';
       }
     });
 
-    document.getElementById('reset-button').addEventListener('click', () => {
+    document.getElementById('reset-button').addEventListener('click', async () => {
+      status.textContent = 'Restaurando valores iniciales en cajero-config.json...';
+      status.style.color = '#a0aec0';
       try {
-        localStorage.removeItem('cajero_config');
-        showConfig(getCajeroConfig());
-        status.textContent = 'Se restauraron los valores iniciales.';
+        showConfig(await saveSharedCajeroConfig({}));
+        status.textContent = 'Se restauraron los valores iniciales en cajero-config.json.';
         status.style.color = '#8df0d4';
       } catch (error) {
         console.error('No se pudo restaurar la configuración del cajero.', error);
-        status.textContent = 'No se pudo restaurar la configuración.';
+        status.textContent = `No se pudo restaurar la configuración: ${error.message}`;
         status.style.color = '#ff8892';
       }
     });
+
+    async function loadUsedTickets() {
+      ticketStatus.textContent = 'Cargando DNI utilizados...';
+      ticketStatus.style.color = '#a0aec0';
+      usedTickets.replaceChildren();
+
+      try {
+        const response = await fetch(`${ticketServiceUrl}/used`);
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Error del servicio (${response.status}).`);
+
+        if (!result.usedDnis.length) {
+          ticketStatus.textContent = 'Todavía no hay DNI registrados.';
+          return;
+        }
+
+        result.usedDnis.forEach(({ dni, ticketNumber }) => {
+          const row = document.createElement('tr');
+          const dniCell = document.createElement('td');
+          const numberCell = document.createElement('td');
+          const actionCell = document.createElement('td');
+          const reprintButton = document.createElement('button');
+
+          dniCell.textContent = dni;
+          numberCell.textContent = String(ticketNumber).padStart(6, '0');
+          reprintButton.type = 'button';
+          reprintButton.className = 'reprint-button';
+          reprintButton.textContent = 'Reimprimir ticket';
+          reprintButton.addEventListener('click', () => reprintTicket(dni, ticketNumber));
+          actionCell.append(reprintButton);
+          row.append(dniCell, numberCell, actionCell);
+          usedTickets.append(row);
+        });
+        ticketStatus.textContent = `${result.usedDnis.length} DNI registrados.`;
+      } catch (error) {
+        console.error('No se pudo cargar el registro de tickets.', error);
+        ticketStatus.textContent = `No se pudo conectar con Node.js: ${error.message}. Iniciá el servicio y abrí esta página desde http://localhost.`;
+        ticketStatus.style.color = '#ff8892';
+      }
+    }
+
+    async function reprintTicket(dni, ticketNumber) {
+      const formattedNumber = String(ticketNumber).padStart(6, '0');
+      if (!window.confirm(`¿Reimprimir el ticket del DNI ${dni}?\n\nSe imprimirá nuevamente el correlativo ${formattedNumber}. No se asignará un número nuevo.`)) {
+        return;
+      }
+
+      ticketStatus.textContent = `Reimprimiendo el ticket ${formattedNumber}...`;
+      ticketStatus.style.color = '#a0aec0';
+      try {
+        const response = await fetch(`${ticketServiceUrl}/reprint`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dni })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Error del servicio (${response.status}).`);
+        ticketStatus.textContent = `Ticket del DNI ${dni} reimpreso con el mismo correlativo ${formattedNumber}.`;
+        ticketStatus.style.color = '#8df0d4';
+      } catch (error) {
+        console.error(`No se pudo reimprimir el ticket del DNI ${dni}.`, error);
+        ticketStatus.textContent = `No se pudo reimprimir el ticket: ${error.message}`;
+        ticketStatus.style.color = '#ff8892';
+      }
+    }
+
+    document.getElementById('refresh-tickets').addEventListener('click', loadUsedTickets);
+    loadUsedTickets();
   </script>
 </body>
 </html>

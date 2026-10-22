@@ -1,0 +1,22 @@
+{
+  "atmWidth": 1920,
+  "atmHeight": 1080,
+  "videoWidth": 1080,
+  "videoHeight": 720,
+  "sideColumnWidth": 20,
+  "buttonGap": 100,
+  "buttonTopMargin": 115,
+  "buttonFontSize": 20,
+  "buttonHeight": 48,
+  "contentTextFontSize": 20,
+  "amountFontSize": 36,
+  "inactivitySeconds": 60,
+  "processCarouselIntervalSeconds": 6,
+  "participantsCarouselIntervalSeconds": 3,
+  "carouselPauseSeconds": 6,
+  "carouselInactivitySeconds": 120,
+  "processCarouselWidth": 100,
+  "processCarouselHeight": 660,
+  "participantsCarouselWidth": 100,
+  "participantsCarouselHeight": 280
+}
