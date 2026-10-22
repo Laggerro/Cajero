@@ -4,7 +4,12 @@ const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { buildWelcomeTicket, createPrintServer, validateTicketData } = require('../server');
+const {
+  buildWelcomeTicket,
+  createPrintServer,
+  migrateCounterFile,
+  validateTicketData
+} = require('../server');
 const testConfig = {
   atmWidth: 1080,
   atmHeight: 720,
@@ -134,6 +139,22 @@ test('shared cajero configuration is persisted as JSON and validates values', as
   });
   assert.equal(invalid.statusCode, 400);
   assert.deepEqual(JSON.parse(await fs.readFile(configPath, 'utf8')), updatedConfig);
+});
+
+test('ticket history migrates from the previous location without losing data', async (t) => {
+  const temporaryDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'ebank-counter-migration-test-'));
+  const sourcePath = path.join(temporaryDirectory, 'old', 'contador-tickets.json');
+  const destinationPath = path.join(temporaryDirectory, 'app', 'contador-tickets.json');
+  const existingState = JSON.stringify({ lastNumber: 4, usedDnis: { '48123456': 4 } });
+  await fs.mkdir(path.dirname(sourcePath), { recursive: true });
+  await fs.writeFile(sourcePath, existingState);
+  t.after(() => fs.rm(temporaryDirectory, { recursive: true, force: true }));
+
+  assert.equal(await migrateCounterFile(sourcePath, destinationPath), true);
+  assert.equal(await fs.readFile(destinationPath, 'utf8'), existingState);
+  await assert.rejects(fs.access(sourcePath), { code: 'ENOENT' });
+  assert.equal(await migrateCounterFile(sourcePath, destinationPath), false);
+  assert.equal(await fs.readFile(destinationPath, 'utf8'), existingState);
 });
 
 test('ticket numbers stay unique across concurrent service instances', async (t) => {

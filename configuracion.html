@@ -66,6 +66,7 @@
     button:hover, .back-link:hover { filter: brightness(1.12); }
     #status { min-height: 20px; color: #8df0d4; font-size: 14px; }
     #ticket-status { min-height: 20px; color: #a0aec0; font-size: 14px; }
+    #node-status { min-height: 20px; color: #a0aec0; font-size: 14px; }
     .records { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th, td { padding: 10px 8px; border-bottom: 1px solid #405782; }
@@ -196,6 +197,15 @@
     </form>
 
     <fieldset>
+      <legend>Servicio de impresión Node.js</legend>
+      <p class="intro">Por seguridad, el navegador no puede iniciar programas de Windows. Si Node.js no está activo, hacé doble clic en iniciar-node.bat, en la carpeta del cajero.</p>
+      <div class="actions">
+        <button type="button" id="check-node">Comprobar servicio</button>
+        <span id="node-status" role="status" aria-live="polite"></span>
+      </div>
+    </fieldset>
+
+    <fieldset>
       <legend>Tickets de rifa asignados</legend>
       <p class="intro">Si alguien pierde su ticket, podés reimprimirlo con el mismo DNI y el mismo correlativo. Así no se crea otro número para esa participación.</p>
       <div class="actions">
@@ -214,6 +224,7 @@
   <script>
     const form = document.getElementById('settings-form');
     const status = document.getElementById('status');
+    const nodeStatus = document.getElementById('node-status');
     const ticketStatus = document.getElementById('ticket-status');
     const usedTickets = document.getElementById('used-tickets');
     const fields = Array.from(form.elements).filter((element) => element.name);
@@ -222,6 +233,23 @@
     function showConfig(config) {
       fields.forEach((field) => { field.value = config[field.name]; });
     }
+
+    async function checkNodeService() {
+      nodeStatus.textContent = 'Comprobando servicio...';
+      nodeStatus.style.color = '#a0aec0';
+      try {
+        const response = await fetch('http://127.0.0.1:3037/api/config');
+        if (!response.ok) throw new Error(`El servicio respondió con error ${response.status}.`);
+        nodeStatus.textContent = 'Node.js está activo y listo.';
+        nodeStatus.style.color = '#8df0d4';
+      } catch (error) {
+        console.error('No se pudo comprobar el servicio Node.js.', error);
+        nodeStatus.textContent = 'Node.js no está activo. Hacé doble clic en iniciar-node.bat, dentro de la carpeta del cajero.';
+        nodeStatus.style.color = '#ff8892';
+      }
+    }
+
+    document.getElementById('check-node').addEventListener('click', checkNodeService);
 
     showConfig(getCajeroConfig());
 

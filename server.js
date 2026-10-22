@@ -10,6 +10,12 @@ const COUNTER_LOCK_TIMEOUT_MS = 30000;
 const COUNTER_LOCK_RETRY_MS = 100;
 const STUDENTS_PATH = path.join(__dirname, 'alumnos.json');
 const CONFIG_PATH = path.join(__dirname, 'cajero-config.json');
+const COUNTER_PATH = path.join(__dirname, 'contador-tickets.json');
+const LEGACY_COUNTER_PATH = path.join(
+  process.env.LOCALAPPDATA || os.homedir(),
+  'eBANK',
+  'contador-tickets.json'
+);
 const CONFIG_LIMITS = {
   atmWidth: [640, 1920],
   atmHeight: [480, 1200],
@@ -37,12 +43,6 @@ const ALLOWED_ORIGINS = (process.env.EBANK_ALLOWED_ORIGINS || 'http://localhost,
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
-const COUNTER_PATH = path.join(
-  process.env.LOCALAPPDATA || os.homedir(),
-  'eBANK',
-  'contador-tickets.json'
-);
-
 function validateTicketData(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     const error = new Error('El pedido de impresión no tiene un formato válido.');
@@ -344,6 +344,55 @@ async function writeCajeroConfig(configPath, config) {
   }
 }
 
+async function migrateCounterFile(sourcePath, destinationPath) {
+  if (path.resolve(sourcePath) === path.resolve(destinationPath)) return false;
+
+  try {
+    await fs.access(destinationPath);
+    return false;
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+
+  let sourceContents;
+  try {
+    sourceContents = await fs.readFile(sourcePath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return false;
+    throw error;
+  }
+
+  await fs.mkdir(path.dirname(destinationPath), { recursive: true });
+  const temporaryPath = `${destinationPath}.${process.pid}.${Date.now()}.migration.tmp`;
+  try {
+    await fs.writeFile(temporaryPath, sourceContents, { flag: 'wx' });
+    await fs.link(temporaryPath, destinationPath);
+  } catch (error) {
+    if (error.code === 'EEXIST') return false;
+    throw error;
+  } finally {
+    try {
+      await fs.unlink(temporaryPath);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.error('No se pudo limpiar el archivo temporal de migración del contador.', error);
+      }
+    }
+  }
+
+  const copiedContents = await fs.readFile(destinationPath);
+  if (!copiedContents.equals(sourceContents)) {
+    throw new Error('La copia del registro de tickets no coincide con el archivo original.');
+  }
+
+  try {
+    await fs.unlink(sourcePath);
+  } catch (error) {
+    console.warn(`El registro ya fue copiado, pero no se pudo quitar el archivo anterior ${sourcePath}:`, error);
+  }
+  return true;
+}
+
 function createPrintServer(options = {}) {
   const printerName = options.printerName || process.env.NOMBRE_IMPRESORA || DEFAULT_PRINTER_NAME;
   const counterPath = options.counterPath || COUNTER_PATH;
@@ -506,14 +555,21 @@ if (require.main === module) {
     console.error('EBANK_PORT debe ser un puerto entre 1 y 65535.');
     process.exitCode = 1;
   } else {
-    const server = createPrintServer();
-    server.listen(port, '127.0.0.1', () => {
-      console.log(`Servicio de impresión eBANK activo en http://127.0.0.1:${port}`);
-      console.log(`Impresora compartida configurada: ${process.env.NOMBRE_IMPRESORA || DEFAULT_PRINTER_NAME}`);
-      console.log(`Orígenes web autorizados: ${ALLOWED_ORIGINS.join(', ')}`);
-    });
-    server.on('error', (error) => {
-      console.error('No se pudo iniciar el servicio de impresión eBANK:', error);
+    migrateCounterFile(LEGACY_COUNTER_PATH, COUNTER_PATH).then((migrated) => {
+      if (migrated) console.log('Registro de DNI y correlativos migrado a la carpeta del cajero.');
+      const server = createPrintServer();
+      server.listen(port, '127.0.0.1', () => {
+        console.log(`Servicio de impresión eBANK activo en http://127.0.0.1:${port}`);
+        console.log(`Impresora compartida configurada: ${process.env.NOMBRE_IMPRESORA || DEFAULT_PRINTER_NAME}`);
+        console.log(`Orígenes web autorizados: ${ALLOWED_ORIGINS.join(', ')}`);
+        console.log(`Registro de DNI y correlativos: ${COUNTER_PATH}`);
+      });
+      server.on('error', (error) => {
+        console.error('No se pudo iniciar el servicio de impresión eBANK:', error);
+        process.exitCode = 1;
+      });
+    }).catch((error) => {
+      console.error('No se pudo migrar el registro de DNI y correlativos:', error);
       process.exitCode = 1;
     });
   }
@@ -524,6 +580,7 @@ module.exports = {
   createPrintServer,
   findUsedTicketNumber,
   listUsedDnis,
+  migrateCounterFile,
   reserveTicketNumber,
   validateCajeroConfig,
   validateTicketData
