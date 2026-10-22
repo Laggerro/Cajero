@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¿Cómo se hizo? - eBANK</title>
+  <title>Participantes - eBANK</title>
+  <script src="assets/js/cajero-config.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
     .atm-container {
-     width: 1080px;
-      height: 720px;
+     width: min(var(--atm-width), calc(100vw - 24px));
+     height: min(var(--atm-height), calc(100vh - 24px));
       background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
       border: 10px solid #1c2d5a; border-radius: 18px;
       display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
@@ -24,21 +25,24 @@
     .brand-title span { color: #e63946; }
     .subtitle { padding-right: 15px;; font-size: 16px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
 
-    .menu-grid { width: 100%; display: flex; justify-content: space-between; align-items: stretch; flex-grow: 1; padding: 10px 0; }
-    .menu-column { width: 28%; display: flex; flex-direction: column; justify-content: flex-end; }
+    .menu-grid { width: 100%; display: flex; justify-content: center; align-items: stretch; flex-grow: 1; padding: 10px 0; }
+    .menu-column { position: absolute; top: var(--button-start-y); left: 20px; width: 28%; display: grid; grid-template-rows: repeat(4, var(--button-row-height)); align-content: start; gap: var(--button-gap); }
+    .right-col { left: auto; right: 20px; }
+    .menu-column .btn-action-w, .menu-column .btn-action-r { grid-row: 4; }
     .left-col { text-align: left; }
     .right-col { text-align: right; }
 
-    .btn-label { font-size: 15px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff; padding: 12px 16px; border-left: 5px solid #00b4d8; border-radius: 6px; }
+    .btn-label { font-size: var(--button-font-size) !important; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff; height: var(--button-row-height); display: flex; align-items: center; padding: 0 16px; border-left: 5px solid #00b4d8; border-radius: 6px; margin: 0; }
     .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
     .btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
     .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
 
     .content-center { width: 44%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .photo-caption, .pause-indicator { font-size: var(--content-text-font-size) !important; }
     
     /* Contenedor del Carrusel de Fotos */
     .carousel-box {
-      width: 100%; height: 280px;
+      width: min(var(--participants-carousel-width), 100%); height: var(--participants-carousel-height);
       background: #060d1f; border: 3px solid #00b4d8;
       border-radius: 12px; overflow: hidden; position: relative;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -61,7 +65,7 @@
       <img src="assets/images/logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
       <div>
         <div class="brand-title">e<span>BANK</span></div>
-        <div class="subtitle">¿Cómo se hizo el Cajero?</div>
+        <div class="subtitle">Participantes</div>
       </div>
     </div>
     <div style="text-align: right;">
@@ -80,7 +84,7 @@
       <div class="carousel-box">
         <img id="carousel-img" class="carousel-img" src="assets/images/construccion/foto1.jpg" alt="Foto Proceso" onerror="this.src='assets/images/logo.png'">
       </div>
-      <div id="photo-caption" class="photo-caption">Imagen 1 de 4: Ensamblado y Cableado</div>
+      <div id="photo-caption" class="photo-caption">Alumnos de 1er Año A y B</div>
       <div id="pause-indicator" class="pause-indicator"></div>
     </div>
 
@@ -90,7 +94,7 @@
   </div>
 
   <div class="footer">
-    <span>[R] Avanzar Foto (Pausa 10s) | [W] Volver al Menú del Cajero</span>
+    <span>[R] Avanzar Foto (pausa configurable) | [W] Volver al Menú del Cajero</span>
   </div>
 </div>
 
@@ -109,7 +113,7 @@ const fotosParticipantes = [
 
   function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, 60000); // 1 minuto
+    inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, getCajeroConfig().carouselInactivitySeconds * 1000);
   }
 
   function showPhoto(index) {
@@ -119,8 +123,8 @@ const fotosParticipantes = [
 
     imgEl.style.opacity = 0.2;
     setTimeout(() => {
-      imgEl.src = fotosConstruccion[currentIndex].src;
-      captionEl.innerText = fotosConstruccion[currentIndex].titulo;
+      imgEl.src = fotosParticipantes[currentIndex].src;
+      captionEl.innerText = fotosParticipantes[currentIndex].titulo;
       imgEl.style.opacity = 1;
     }, 150);
   }
@@ -129,9 +133,9 @@ const fotosParticipantes = [
     clearInterval(autoSlideTimer);
     document.getElementById('pause-indicator').innerText = "";
     autoSlideTimer = setInterval(() => {
-      currentIndex = (currentIndex + 1) % fotosConstruccion.length;
+      currentIndex = (currentIndex + 1) % fotosParticipantes.length;
       showPhoto(currentIndex);
-    }, 3000); // Avanza cada 3 segundos en modo automático
+    }, getCajeroConfig().participantsCarouselIntervalSeconds * 1000);
   }
 
   function pauseAndNext() {
@@ -139,15 +143,16 @@ const fotosParticipantes = [
     clearTimeout(pauseTimer);
 
     // Avanza a la siguiente foto
-    currentIndex = (currentIndex + 1) % fotosConstruccion.length;
+    currentIndex = (currentIndex + 1) % fotosParticipantes.length;
     showPhoto(currentIndex);
 
-    document.getElementById('pause-indicator').innerText = "⏸️ Pausado por 10 segundos";
+    const pauseSeconds = getCajeroConfig().carouselPauseSeconds;
+    document.getElementById('pause-indicator').innerText = `⏸️ Pausado por ${pauseSeconds} segundos`;
 
-    // Reanuda el carrusel automático pasados los 10 segundos
+    // Reanuda el carrusel automático al terminar la pausa configurada
     pauseTimer = setTimeout(() => {
       startAutoSlide();
-    }, 10000);
+    }, pauseSeconds * 1000);
   }
 
   document.addEventListener('keydown', (e) => {

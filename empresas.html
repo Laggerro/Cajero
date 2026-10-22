@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Empresas Aliadas - eBANK</title>
+  <script src="assets/js/cajero-config.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
     .atm-container {
-     width: 1080px;
-      height: 720px;
+     width: min(var(--atm-width), calc(100vw - 24px));
+      height: min(var(--atm-height), calc(100vh - 24px));
       background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
       border: 10px solid #1c2d5a; border-radius: 18px;
       display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
@@ -24,20 +25,24 @@
     .brand-title span { color: #e63946; }
     .subtitle { padding-right: 15px;; font-size: 16px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
 
-    .menu-grid { width: 100%; display: flex; justify-content: space-between; align-items: stretch; flex-grow: 1; padding: 10px 0; }
-    .menu-column { width: 36%; display: flex; flex-direction: column; justify-content: space-around; }
+    .menu-grid { width: 100%; display: flex; justify-content: center; align-items: stretch; flex-grow: 1; padding: 10px 0; }
+    .menu-column { position: absolute; top: var(--button-start-y); left: 20px; width: 36%; display: grid; grid-template-rows: repeat(4, var(--button-row-height)); align-content: start; gap: var(--button-gap); }
+    .right-col { left: auto; right: 20px; }
+    .menu-column .btn-action-w, .menu-column .btn-action-r { grid-row: 4; }
     .left-col { text-align: left; }
     .right-col { text-align: right; }
 
     .btn-label {
-      font-size: 15px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff;
-      padding: 10px 14px; border-left: 5px solid #00b4d8; border-radius: 6px; margin: 4px 0;
+      font-size: var(--button-font-size) !important; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff;
+      height: var(--button-row-height); display: flex; align-items: center;
+      padding: 0 16px; border-left: 5px solid #00b4d8; border-radius: 6px; margin: 0;
     }
     .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
     .btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
     .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
 
     .content-center { width: 26%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .content-center > p, .content-center > h3, #page-indicator, .video-modal > p, .video-modal > h4 { font-size: var(--content-text-font-size) !important; }
 
     /* Modal emergente del Video */
     .video-modal {
@@ -45,7 +50,7 @@
       top: 5px;
       left: 50%;
       transform: translateX(-50%);
-      width: 900px;
+      width: min(var(--video-width), calc(100% - 20px));
       background: #060d1f;
       border: 3px solid #00b4d8;
       border-radius: 12px;
@@ -57,7 +62,7 @@
       z-index: 10;
     }
 
-    .promo-video { width: 100%; height: 520px; object-fit: cover; border-radius: 8px; border: 1px solid #1c2d5a; }
+    .promo-video { width: 100%; height: min(var(--video-height), 60vh); object-fit: cover; border-radius: 8px; border: 1px solid #1c2d5a; }
 
     .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 13px; color: #94a3b8; }
     .hidden { display: none !important; }
@@ -147,7 +152,7 @@
   function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
     if (!isVideoPlaying) {
-      inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, 60000);
+      inactivityTimer = setTimeout(() => { window.location.href = "index.html"; }, getCajeroConfig().carouselInactivitySeconds * 1000);
     }
   }
 

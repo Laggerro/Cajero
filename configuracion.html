@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración del cajero - eBANK</title>
+  <script src="assets/js/cajero-config.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      background: #0b132b;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    main {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      padding: 30px;
+      background: linear-gradient(135deg, #0f1c3f, #1c2d5a);
+      border: 1px solid #294276;
+      border-radius: 18px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, .35);
+    }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    .intro { margin: 0 0 24px; color: #a0aec0; line-height: 1.5; }
+    fieldset {
+      margin: 0 0 20px;
+      padding: 18px;
+      border: 1px solid rgba(0, 180, 216, .45);
+      border-radius: 12px;
+    }
+    legend { padding: 0 8px; color: #00f0ff; font-weight: 700; }
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    label { display: flex; flex-direction: column; gap: 7px; color: #e2e8f0; font-size: 14px; }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #405782;
+      border-radius: 7px;
+      background: #060d1f;
+      color: #ffffff;
+      font: inherit;
+    }
+    input:focus { outline: 2px solid #00b4d8; border-color: transparent; }
+    .hint { color: #94a3b8; font-size: 12px; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    button, .back-link {
+      display: inline-block;
+      padding: 11px 17px;
+      border: 0;
+      border-radius: 7px;
+      background: #00b4d8;
+      color: #061328;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .back-link { background: #26395f; color: #ffffff; }
+    button:hover, .back-link:hover { filter: brightness(1.12); }
+    #status { min-height: 20px; color: #8df0d4; font-size: 14px; }
+    @media (max-width: 600px) {
+      body { padding: 16px 10px; }
+      main { padding: 20px 15px; }
+      .fields { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Configuración del cajero</h1>
+    <p class="intro">Ajustá el diseño y los tiempos del cajero. Los cambios se guardan en este navegador y se aplican también a las páginas de carruseles.</p>
+
+    <form id="settings-form">
+      <fieldset>
+        <legend>Pantalla del cajero</legend>
+        <div class="fields">
+          <label>Ancho del cajero (px)
+            <input name="atmWidth" type="number" min="640" max="1920" step="10" required>
+          </label>
+          <label>Alto del cajero (px)
+            <input name="atmHeight" type="number" min="480" max="1200" step="10" required>
+          </label>
+          <label>Ancho máximo del video de bienvenida (px)
+            <input name="videoWidth" type="number" min="300" max="1600" step="10" required>
+            <span class="hint">Se adapta al espacio central disponible.</span>
+          </label>
+          <label>Alto del video de bienvenida (px)
+            <input name="videoHeight" type="number" min="150" max="900" step="10" required>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Botones laterales</legend>
+        <div class="fields">
+          <label>Ancho de cada columna lateral (%)
+            <input name="sideColumnWidth" type="number" min="15" max="45" step="1" required>
+            <span class="hint">Al aumentar el ancho, los botones se acercan al centro.</span>
+          </label>
+          <label>Distancia vertical entre filas de botones (px)
+            <input name="buttonGap" type="number" min="0" max="300" step="1" required>
+            <span class="hint">Se aplica por igual entre el 1.º, 2.º, 3.º y 4.º botón de ambos lados.</span>
+          </label>
+          <label>Distancia desde el encabezado hasta la primera fila (px)
+            <input name="buttonTopMargin" type="number" min="0" max="300" step="1" required>
+            <span class="hint">Se mide desde el borde inferior del encabezado hasta el primer botón, en todas las páginas.</span>
+          </label>
+          <label>Tamaño de texto de los botones (px)
+            <input name="buttonFontSize" type="number" min="12" max="40" step="1" required>
+          </label>
+          <label>Altura fija de cada botón (px)
+            <input name="buttonHeight" type="number" min="40" max="100" step="1" required>
+            <span class="hint">Mantiene los cuatro puntos de pulsación en la misma posición en todas las pantallas.</span>
+          </label>
+          <label>Tamaño de textos informativos y montos (px)
+            <input name="contentTextFontSize" type="number" min="12" max="40" step="1" required>
+            <span class="hint">Ajusta saludos, textos de ayuda, saldos y mensajes en las páginas del cajero.</span>
+          </label>
+          <label>Tamaño de importes, DNI y PIN ingresados (px)
+            <input name="amountFontSize" type="number" min="16" max="60" step="1" required>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Tiempo de espera</legend>
+        <div class="fields">
+          <label>Inactividad del cajero antes de volver al inicio (segundos)
+            <input name="inactivitySeconds" type="number" min="5" max="600" step="1" required>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Carruseles</legend>
+        <div class="fields">
+          <label>Pausa después de avanzar manualmente (segundos)
+            <input name="carouselPauseSeconds" type="number" min="0" max="120" step="1" required>
+          </label>
+          <label>Inactividad antes de volver al cajero (segundos)
+            <input name="carouselInactivitySeconds" type="number" min="5" max="600" step="1" required>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Carrusel «Cómo se hizo»</legend>
+        <div class="fields">
+          <label>Tiempo entre imágenes (segundos)
+            <input name="processCarouselIntervalSeconds" type="number" min="1" max="60" step="1" required>
+          </label>
+          <label>Ancho de la imagen (% del espacio central)
+            <input name="processCarouselWidth" type="number" min="30" max="100" step="1" required>
+          </label>
+          <label>Alto del área de la imagen (px)
+            <input name="processCarouselHeight" type="number" min="150" max="700" step="10" required>
+          </label>
+          <span class="hint">El marco y las imágenes del carrusel cambian juntos de tamaño.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Carrusel «Participantes»</legend>
+        <div class="fields">
+          <label>Tiempo entre imágenes (segundos)
+            <input name="participantsCarouselIntervalSeconds" type="number" min="1" max="60" step="1" required>
+          </label>
+          <label>Ancho de la imagen (% del espacio central)
+            <input name="participantsCarouselWidth" type="number" min="30" max="100" step="1" required>
+          </label>
+          <label>Alto del área de la imagen (px)
+            <input name="participantsCarouselHeight" type="number" min="150" max="700" step="10" required>
+          </label>
+          <span class="hint">El marco y las imágenes del carrusel cambian juntos de tamaño.</span>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit">Guardar configuración</button>
+        <button type="button" id="reset-button" class="back-link">Restaurar valores iniciales</button>
+        <a class="back-link" href="index.html">Volver al cajero</a>
+        <span id="status" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('settings-form');
+    const status = document.getElementById('status');
+    const fields = Array.from(form.elements).filter((element) => element.name);
+
+    function showConfig(config) {
+      fields.forEach((field) => { field.value = config[field.name]; });
+    }
+
+    showConfig(getCajeroConfig());
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const values = {};
+      fields.forEach((field) => { values[field.name] = field.value; });
+      try {
+        showConfig(saveCajeroConfig(values));
+        status.textContent = 'Configuración guardada correctamente.';
+        status.style.color = '#8df0d4';
+      } catch (error) {
+        console.error('No se pudo guardar la configuración del cajero.', error);
+        status.textContent = 'No se pudo guardar. Revisá los permisos de almacenamiento del navegador.';
+        status.style.color = '#ff8892';
+      }
+    });
+
+    document.getElementById('reset-button').addEventListener('click', () => {
+      try {
+        localStorage.removeItem('cajero_config');
+        showConfig(getCajeroConfig());
+        status.textContent = 'Se restauraron los valores iniciales.';
+        status.style.color = '#8df0d4';
+      } catch (error) {
+        console.error('No se pudo restaurar la configuración del cajero.', error);
+        status.textContent = 'No se pudo restaurar la configuración.';
+        status.style.color = '#ff8892';
+      }
+    });
+  </script>
+</body>
+</html>

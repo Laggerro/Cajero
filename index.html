@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>eBANK - Banco Escolar</title>
+  <script src="assets/js/cajero-config.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
@@ -18,14 +19,14 @@
     }
 
     .atm-container {
-      width: 1080px;
-      height: 720px;
+      width: min(var(--atm-width), calc(100vw - 24px));
+      height: min(var(--atm-height), calc(100vh - 24px));
       background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
       border: 10px solid #1c2d5a;
       border-radius: 18px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       padding: 20px;
       box-shadow: 0 0 40px rgba(0, 102, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
       position: relative;
@@ -56,7 +57,7 @@
       border-radius: 6px;
       padding: 8px 15px;
       text-align: center;
-      font-size: 16px;
+      font-size: var(--content-text-font-size);
       font-weight: 700;
       color: #00f0ff;
       margin-bottom: 8px;
@@ -80,9 +81,8 @@
     }
 
     .video-container {
-      width: 150%;
-      max-width: 850px;
-      height: 360px;
+      width: min(var(--video-width), 100%);
+      height: min(var(--video-height), 60vh);
       background: #000;
       border: 3px solid #00b4d8;
       border-radius: 12px;
@@ -102,29 +102,34 @@
       padding: 10px 0;
     }
 
-    .menu-column { width: 38%; display: flex; flex-direction: column; justify-content: space-around; }
+    .menu-column { position: absolute; top: var(--button-start-y); left: 20px; width: var(--side-column-width); display: grid; grid-template-rows: repeat(4, var(--button-row-height)); align-content: start; justify-content: stretch !important; gap: var(--button-gap); }
+    .right-col { left: auto; right: 20px; }
+    .menu-column .btn-action-w, .menu-column .btn-action-r { grid-row: 4; }
     .left-col { text-align: left; }
     .right-col { text-align: right; }
 
     .btn-label {
-      font-size: 16px;
+      font-size: var(--button-font-size) !important;
       font-weight: 700;
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
-      padding: 12px 16px;
+      height: var(--button-row-height);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
       border-left: 5px solid #00b4d8;
       border-radius: 6px;
-      margin: 4px 0;
+      margin: 0;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
 
-    .right-col .btn-label { border-left: none; border-right: 5px solid #00b4d8; }
+    .right-col .btn-label { justify-content: flex-end; border-left: none; border-right: 5px solid #00b4d8; }
 
     .btn-label.highlight {
       background: linear-gradient(90deg, rgba(230, 57, 70, 0.25) 0%, rgba(230, 57, 70, 0.1) 100%);
       border-right: 6px solid #e63946 !important;
       color: #fff;
-      font-size: 17px;
+      font-size: var(--button-font-size);
       text-shadow: 0 0 5px rgba(230, 57, 70, 0.8);
     }
 
@@ -132,7 +137,7 @@
     .btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
 
     .input-box {
-      font-size: 36px;
+      font-size: var(--amount-font-size);
       font-weight: bold;
       letter-spacing: 6px;
       border: 2px solid #00b4d8;
@@ -145,7 +150,7 @@
     }
 
     .notice {
-      font-size: 13px;
+      font-size: var(--content-text-font-size);
       background: rgba(230, 57, 70, 0.15);
       border: 1px solid #e63946;
       color: #ff8892;
@@ -154,8 +159,12 @@
       margin-top: 10px;
     }
 
-    .warning-msg { color: #e63946; font-weight: bold; font-size: 15px; margin-top: 8px; min-height: 22px; }
+    .warning-msg { color: #e63946; font-weight: bold; font-size: var(--content-text-font-size); margin-top: 8px; min-height: 22px; }
+    .content-body > p, .content-body > h3, #info-title, #info-content, #info-content * { font-size: var(--content-text-font-size) !important; }
+    #info-content { white-space: pre-line; }
     .footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; font-size: 13px; color: #94a3b8; }
+    .footer a { color: #00b4d8; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
     .hidden { display: none !important; }
     .badge { color: #fff; padding: 0px 0px; border-radius: 4px; font-size: 18px; font-weight: bold; }
   </style>
@@ -265,7 +274,7 @@
       <div class="menu-column right-col">
         <div class="btn-label">Cambiar PIN &gt;</div>
         <div class="btn-label">Puntos Escolares &gt;</div>
-        <div class="btn-label">--- &gt;</div>
+        <div class="btn-label">IMPRIMIR BIENVENIDA &gt;</div>
         <div class="btn-label btn-action-r">SALIR / CANCELAR &gt;</div>
       </div>
     </div>
@@ -285,7 +294,7 @@
         <div class="btn-label highlight">Empresas Aliadas &gt;</div>
         <div class="btn-label highlight">¿Cómo se hizo? &gt;</div>
         <div class="btn-label highlight">Participantes &gt;</div>
-        <div class="btn-label highlight btn-action-r">Info Institucional &gt;</div>
+        <div class="btn-label highlight btn-action-r">IMPRIMIR BIENVENIDA &gt;</div>
       </div>
     </div>
   </div>
@@ -364,16 +373,33 @@
     </div>
   </div>
 
+  <div id="screen-ticket-confirm" class="menu-grid hidden">
+    <div class="menu-column left-col">
+      <div class="btn-label btn-action-w">&lt; CONFIRMAR IMPRESIÓN [W]</div>
+    </div>
+    <div class="content-body">
+      <h3>CONFIRMAR TICKET DE BIENVENIDA</h3>
+      <p style="margin-top: 16px; color: #e2e8f0;">
+        El DNI ingresado debe ser verdadero porque se utilizará como identificación para la rifa.
+      </p>
+      <p id="ticket-confirm-dni" style="margin-top: 14px; color: #00f0ff; font-weight: 700;"></p>
+      <p style="margin-top: 14px; color: #a0aec0;">Al confirmar se imprimirá un ticket con un número correlativo único.</p>
+    </div>
+    <div class="menu-column right-col">
+      <div class="btn-label btn-action-r">CANCELAR [R] &gt;</div>
+    </div>
+  </div>
+
   <div class="footer">
     <span id="footer-text">Seleccione una opción presionando los botones laterales</br></span>
-    <span id="footer-text">@Laggersoft</span>
+    <span id="footer-text">@Laggersoft | <a href="configuracion.html">Configuración</a></span>
   </div>
 </div>
 
 <script>
   let alumnos = [];
   let inactivityTimer = null;
-  const INACTIVITY_TIME = 60000;
+  const INACTIVITY_TIME = getCajeroConfig().inactivitySeconds * 1000;
 
   fetch('alumnos.json')
     .then(r => r.json())
@@ -389,14 +415,18 @@
     user: null,
     saldo: 0,
     isAlumno: false,
-    transfDestName: ''
+    dni: '',
+    transfDestName: '',
+    ticketConfirmationReturnScreen: null,
+    ticketPrintPending: false
   };
 
   function saveSession() {
     sessionStorage.setItem('ebank_session', JSON.stringify({
       user: state.user,
       saldo: state.saldo,
-      isAlumno: state.isAlumno
+      isAlumno: state.isAlumno,
+      dni: state.dni
     }));
   }
 
@@ -407,6 +437,7 @@
       state.user = data.user;
       state.saldo = data.saldo;
       state.isAlumno = data.isAlumno;
+      state.dni = data.dni || (data.user && data.user.dni) || '';
 
       if (state.isAlumno && state.user) {
         document.getElementById('greeting-alumno').innerText = `👋 Bienvenido/a: ${state.user.nombre.toUpperCase()} ${state.user.apellido.toUpperCase()} (${state.user.curso})`;
@@ -479,6 +510,7 @@
   }
 
   function handleSideButton(btn) {
+    if (state.ticketPrintPending) return;
     clearWarnings();
 
     if (state.currentScreen === 'welcome') {
@@ -587,6 +619,15 @@
       return;
     }
 
+    if (state.currentScreen === 'ticket-confirm') {
+      if (btn === 'L4') {
+        confirmWelcomeTicket();
+      } else if (btn === 'R4') {
+        cancelWelcomeTicket();
+      }
+      return;
+    }
+
     if (state.currentScreen === 'menu-alumno') {
       if (btn === 'L1') showInfo("CONSULTA DE SALDO", `Hola <b>${state.user.nombre} ${state.user.apellido}</b><br>${state.user.curso}<br><br>Saldo disponible: <b style="color:#00f0ff; font-size:26px;">$${state.saldo.toLocaleString()}</b>`);
       if (btn === 'L2') { state.inputBuffer = ''; showScreen('extrac-monto'); updateDisplays(); }
@@ -594,6 +635,7 @@
       if (btn === 'L4') showInfo("PERFIL DEL ALUMNO", `<b>Alumno:</b> ${state.user.nombre} ${state.user.apellido}<br><b>Curso:</b> ${state.user.curso}<br><b>Estado:</b> Cliente Activo eBANK.`);
       if (btn === 'R1') { state.inputBuffer = ''; showScreen('cambio-pin'); updateDisplays(); }
       if (btn === 'R2') showInfo("PUNTOS ESCOLARES", `Puntos acumulados: <b style="color:#00b4d8;">450 Pts</b>`);
+      if (btn === 'R3') requestWelcomeTicket();
       if (btn === 'R4') resetATM();
       return;
     }
@@ -608,7 +650,7 @@
       if (btn === 'R1') window.location.href = "empresas.html";
       if (btn === 'R2') window.location.href = "como_se_hizo.html";
       if (btn === 'R3') window.location.href = "participantes.html";
-      if (btn === 'R4') window.location.href = "info_institucional.html";
+      if (btn === 'R4') requestWelcomeTicket();
     }
   }
 
@@ -617,7 +659,71 @@
     state.saldo = Math.floor(Math.random() * 75000) + 10000;
     state.user = found || { nombre: "Visitante", apellido: "Invitado" };
     state.isAlumno = !!found;
+    state.dni = dni;
     saveSession();
+  }
+
+  function requestWelcomeTicket() {
+    const dni = state.dni || (state.user && state.user.dni) || '';
+    if (!/^\d{7,8}$/.test(dni)) {
+      showInfo('NO SE PUEDE IMPRIMIR', 'No encontramos un DNI válido en esta sesión. Volvé a ingresar el DNI.');
+      return;
+    }
+
+    state.ticketConfirmationReturnScreen = state.currentScreen;
+    document.getElementById('ticket-confirm-dni').innerText = `DNI ingresado: ${dni}`;
+    showScreen('ticket-confirm');
+  }
+
+  function cancelWelcomeTicket() {
+    const returnScreen = state.ticketConfirmationReturnScreen;
+    state.ticketConfirmationReturnScreen = null;
+    showScreen(returnScreen || (state.isAlumno ? 'menu-alumno' : 'menu-visitante'));
+  }
+
+  async function confirmWelcomeTicket() {
+    if (state.ticketPrintPending) return;
+    state.ticketConfirmationReturnScreen = null;
+    state.ticketPrintPending = true;
+    const dni = state.dni || (state.user && state.user.dni) || '';
+    showPrintMessage('IMPRIMIENDO BIENVENIDA', 'Esperá mientras se envía el ticket a la impresora.');
+
+    try {
+      const response = await fetch('http://127.0.0.1:3037/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dni })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        if (response.status === 409 && result.alreadyUsed) {
+          showPrintMessage(
+            'DNI YA UTILIZADO',
+            `Este DNI ya tiene asignado el ticket N.º ${String(result.ticketNumber).padStart(6, '0')}. No se puede imprimir otro ticket con el mismo DNI.`
+          );
+          return;
+        }
+        throw new Error(result.error || `Error del servicio de impresión (${response.status}).`);
+      }
+      showPrintMessage(
+        'BIENVENIDA IMPRESA',
+        `Ticket N.º ${String(result.ticketNumber).padStart(6, '0')}\n\n¡Gracias por visitar la Expo Tecno Contable!`
+      );
+    } catch (error) {
+      console.error('No se pudo imprimir el ticket de bienvenida.', error);
+      const message = error instanceof TypeError
+        ? 'No se pudo conectar con Node.js. Iniciá el servicio de impresión y volvé a intentar.'
+        : error.message;
+      showPrintMessage('NO SE PUDO IMPRIMIR', message);
+    } finally {
+      state.ticketPrintPending = false;
+    }
+  }
+
+  function showPrintMessage(title, message) {
+    document.getElementById('info-title').innerText = title;
+    document.getElementById('info-content').innerText = message;
+    showScreen('info');
   }
 
   function showInfo(title, content) {
@@ -648,6 +754,7 @@
     state.inputBuffer = '';
     state.user = null;
     state.isAlumno = false;
+    state.dni = '';
     clearWarnings();
     updateDisplays();
     showScreen('welcome');

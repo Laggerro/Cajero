@@ -1,0 +1,10 @@
+{
+  "name": "ebank-cajero",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servicio local para imprimir tickets de bienvenida eBANK en impresoras ESC/POS.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}
