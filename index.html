@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eBANK Banco Escolar</title>
+<script src="assets/js/cajero-config.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body {
+    background-color: #0b132b;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+.atm-container {
+    width: min(var(--atm-width), calc(100vw - 24px));
+    height: min(var(--atm-height), calc(100vh - 24px));
+    background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
+    border: 10px solid #1c2d5a;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 0 40px rgba(0, 102, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #e63946;
+    background: rgba(10, 20, 45, 0.6);
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+.header-left { display: flex; align-items: center; gap: 15px; }
+.school-logo { height: 45px; width: auto; object-fit: contain; }
+.brand-title { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 1px; }
+.brand-title span { color: #e63946; }
+.subtitle { padding-right: 15px; font-size: 16px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
+.user-greeting-banner {
+    width: 100%;
+    background: rgba(0, 180, 216, 0.15);
+    border: 1px solid #00b4d8;
+    border-radius: 6px;
+    padding: 8px 15px;
+    text-align: center;
+    font-size: var(--content-text-font-size);
+    font-weight: 700;
+    color: #00f0ff;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.user-greeting-banner.guest {
+    background: rgba(230, 57, 70, 0.15);
+    border-color: #e63946;
+    color: #ffffff;
+}
+.content-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px 20px;
+}
+.video-container {
+    width: min(var(--video-width), 100%);
+    height: min(var(--video-height), 60vh);
+    background: #000;
+    border: 3px solid #00b4d8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    margin-bottom: 55px;
+}
+.promo-video { width: 100%; height: 100%; object-fit: contain; }
+.menu-grid {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 100%;
+    padding: 10px 0;
+}
+.menu-column { position: absolute; top: var(--button-start-y); left: 20px; width: var(--side-column-width); display: grid; grid-template-rows: repeat(4, var(--button-row-height)); align-content: start; justify-content: stretch !important; gap: var(--button-gap); }
+.right-col { left: auto; right: 20px; }
+.menu-column .btn-action-w, .menu-column .btn-action-r { grid-row: 4; }
+.left-col { text-align: left; }
+.right-col { text-align: right; }
+.btn-label {
+    font-size: var(--button-font-size) !important;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    height: var(--button-row-height);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-left: 5px solid #00b4d8;
+    border-radius: 6px;
+    margin: 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.right-col .btn-label { justify-content: flex-end; border-left: none; border-right: 5px solid #00b4d8; }
+.btn-label.highlight {
+    background: linear-gradient(90deg, rgba(230, 57, 70, 0.25) 0%, rgba(230, 57, 70, 0.1) 100%);
+    border-right: 6px solid #e63946 !important;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(230, 57, 70, 0.8);
+}
+.btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
+.btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
+.input-box {
+    font-size: var(--amount-font-size);
+    font-weight: bold;
+    letter-spacing: 6px;
+    border: 2px solid #00b4d8;
+    border-radius: 8px;
+    padding: 10px 25px;
+    background: #060d1f;
+    color: #00f0ff;
+    margin: 15px 0;
+    min-width: 280px;
+}
+.notice {
+    font-size: var(--content-text-font-size);
+    background: rgba(230, 57, 70, 0.15);
+    border: 1px solid #e63946;
+    color: #ff8892;
+    padding: 8px 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+.warning-msg { color: #e63946; font-weight: bold; font-size: 14px; min-height: 22px; margin-top: 5px; }
+#info-title, #info-content { color: #00f0ff; }
+.content-body > p, .content-body > h3, #info-content * { font-size: var(--content-text-font-size) !important; }
+#info-content { white-space: pre-line; }
+.footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; font-size: 13px; color: #94a3b8; }
+.footer a { color: #00b4d8; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+.hidden { display: none !important; }
+.badge { color: #fff; border-radius: 4px; font-size: 18px; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="atm-container">
+    <div class="header">
+        <div class="header-left">
+            <img src="assets/images/logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">e<span>BANK</span></div>
+                <div class="subtitle">SIMULADOR de CAJERO</div>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <span class="badge">Departamento Economía</span>
+            <div class="subtitle" style="margin-top: 4px; color: #00b4d8;">EXPO Técno Contable</div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 0: BIENVENIDA CON VIDEO EN BUCLE -->
+    <div id="screen-welcome" class="menu-grid">
+        <div class="menu-column left-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+        </div>
+        <div class="content-body" style="padding: 0 10px;">
+            <div class="video-container">
+                <video id="bg-video" class="promo-video" autoplay loop playsinline>
+                    <source src="assets/videos/presentacion.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label btn-action-w">COMENZAR &gt;</div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 1: INGRESO DE DNI -->
+    <div id="screen-dni" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label btn-action-r">&lt; CANCELAR / VOLVER</div>
+        </div>
+        <div class="content-body">
+            <h3>INGRESE SU DNI:</h3>
+            <div id="dni-display" class="input-box">_</div>
+            <p style="font-size: 14px; color: #a0aec0;">Utilice el teclado numérico</p>
+            <div id="dni-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label btn-action-w">ACEPTAR &gt;</div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 1B: PIN -->
+    <div id="screen-pin" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label" style="visibility: hidden;">&lt;</div>
+            <div class="btn-label btn-action-r">&lt; CANCELAR</div>
+        </div>
+        <div class="content-body">
+            <h3>INGRESE SU CLAVE PIN (4 DÍG):</h3>
+            <div id="pin-display" class="input-box">_</div>
+            <div class="notice">Ingrese cualquier clave de 4 dígitos para continuar</div>
+            <div id="pin-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;">
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label" style="visibility: hidden;">&gt;</div>
+            <div class="btn-label btn-action-w">CONFIRMAR &gt;</div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE MENÚ UNIFICADA -->
+    <div id="screen-menu" class="hidden" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+        <div id="user-greeting-banner" class="user-greeting-banner"></div>
+        <div class="menu-grid" style="flex-grow: 1;">
+            <div class="menu-column left-col">
+                <div class="btn-label">&lt; Consultar Saldo</div>
+                <div class="btn-label">&lt; Extraer Dinero</div>
+                <div class="btn-label">&lt; Transferencias</div>
+                <div class="btn-label btn-action-r">&lt; SALIR / CANCELAR</div>
+            </div>
+            <div class="menu-column right-col">
+                <div class="btn-label highlight">Empresas Aliadas &gt;</div>
+                <div class="btn-label highlight">Sustentables &gt;</div>
+                <div class="btn-label highlight">Marketing &gt;</div>
+                <div class="btn-label btn-action-w">IMPRIMIR BIENVENIDA &gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTRAS PANTALLAS -->
+    <div id="screen-extrac-monto" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;"><div class="btn-label btn-action-r">&lt; CANCELAR</div></div>
+        <div class="content-body">
+            <h3>EXTRACCIÓN DE DINERO</h3>
+            <p style="margin-top: 10px; color: #a0aec0;">Ingrese el monto a retirar ($):</p>
+            <div id="extrac-monto-display" class="input-box">$ _</div>
+            <div id="extrac-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;"><div class="btn-label btn-action-w">CONFIRMAR RETIRO &gt;</div></div>
+    </div>
+
+    <div id="screen-transf-dni" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;"><div class="btn-label btn-action-r">&lt; CANCELAR</div></div>
+        <div class="content-body">
+            <h3>TRANSFERENCIA BANCARIA</h3>
+            <p style="margin-top: 10px; color: #a0aec0;">Ingrese DNI del destinatario:</p>
+            <div id="transf-dni-display" class="input-box">_</div>
+            <div id="transf-dni-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;"><div class="btn-label btn-action-w">BUSCAR DNI &gt;</div></div>
+    </div>
+
+    <div id="screen-transf-monto" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;"><div class="btn-label btn-action-r">&lt; CANCELAR</div></div>
+        <div class="content-body">
+            <h3 id="transf-dest-title" style="color: #00b4d8;">Destinatario: ---</h3>
+            <p style="margin-top: 10px; color: #a0aec0;">Ingrese el monto a transferir ($):</p>
+            <div id="transf-monto-display" class="input-box">$ _</div>
+            <div id="transf-monto-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;"><div class="btn-label btn-action-w">TRANSFERIR &gt;</div></div>
+    </div>
+
+    <div id="screen-cambio-pin" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;"><div class="btn-label btn-action-w">&lt; GUARDAR PIN</div></div>
+        <div class="content-body">
+            <h3>CAMBIO DE CLAVE PIN</h3>
+            <p style="margin-top: 10px; color: #a0aec0;">Ingrese nueva clave de 4 dígitos:</p>
+            <div id="newpin-display" class="input-box">_</div>
+            <div id="pin-change-warning" class="warning-msg"></div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;"><div class="btn-label btn-action-r">&gt; CANCELAR</div></div>
+    </div>
+
+    <div id="screen-info" class="menu-grid hidden">
+        <div class="menu-column left-col" style="justify-content: flex-end;"><div class="btn-label btn-action-r">&lt; VOLVER / CANCELAR</div></div>
+        <div class="content-body">
+            <h2 id="info-title" style="color: #00b4d8; margin-bottom: 15px;">Título</h2>
+            <div id="info-content" style="font-size: 18px; line-height: 1.6; max-width: 600px;">Contenido</div>
+        </div>
+        <div class="menu-column right-col" style="justify-content: flex-end;"><div class="btn-label btn-action-w">ACEPTAR / CONTINUAR &gt;</div></div>
+    </div>
+
+    <div id="screen-ticket-confirm" class="menu-grid hidden">
+        <div class="menu-column left-col"><div class="btn-label btn-action-r">&lt; CANCELAR</div></div>
+        <div class="content-body">
+            <h3>CONFIRMAR TICKET DE BIENVENIDA</h3>
+            <p style="margin-top: 16px; color: #e2e8f0;">Por favor coloque su DNI verdadero, para una impresión correcta</p>
+            <p id="ticket-confirm-dni" style="margin-top: 14px; color: #00f0ff; font-weight: 700;"></p>
+            <p style="margin-top: 14px; color: #a0aec0;">Al confirmar se imprimirá un ticket, por favor retírelo</p>
+        </div>
+        <div class="menu-column right-col"><div class="btn-label btn-action-w">IMPRIMIR TICKET &gt;</div></div>
+    </div>
+
+    <div class="footer">
+        <span id="footer-text">Seleccione una opción presionando los botones laterales<br></span>
+        <span id="footer-text">@Laggersoft 2026 | <a href="configuracion.html">Configuración</a></span>
+    </div>
+</div>
+
+<script>
+let alumnos = [];
+let inactivityTimer = null;
+const INACTIVITY_TIME = getCajeroConfig().inactivitySeconds * 1000;
+
+fetch('alumnos.json')
+    .then(r => r.json())
+    .then(data => {
+        alumnos = data;
+        checkSession();
+    })
+    .catch(err => console.log("Cargando...", err));
+
+let state = {
+    currentScreen: 'welcome',
+    inputBuffer: '',
+    user: null,
+    saldo: 0,
+    isAlumno: false,
+    dni: '',
+    transfDestName: '',
+    ticketConfirmationReturnScreen: null,
+    ticketPrintPending: false
+};
+
+function updateMenuGreeting() {
+    const banner = document.getElementById('user-greeting-banner');
+    if (state.isAlumno && state.user && state.user.nombre) {
+        banner.classList.remove('guest');
+        banner.innerText = `Bienvenido/a: ${state.user.nombre.toUpperCase()} ${state.user.apellido.toUpperCase()} (${state.user.curso})`;
+    } else {
+        banner.classList.add('guest');
+        banner.innerText = `Cliente Invitado DNI: ${state.dni}`;
+    }
+}
+
+function saveSession() {
+    sessionStorage.setItem('ebank_session', JSON.stringify({
+        user: state.user,
+        saldo: state.saldo,
+        isAlumno: state.isAlumno,
+        dni: state.dni
+    }));
+}
+
+function checkSession() {
+    // Si hay sesión guardada, la restaura y va directamente al menú principal
+    const saved = sessionStorage.getItem('ebank_session');
+    if (saved) {
+        const data = JSON.parse(saved);
+        state.user = data.user;
+        state.saldo = data.saldo;
+        state.isAlumno = data.isAlumno;
+        state.dni = data.dni || (data.user && data.user.dni) || '';
+        updateMenuGreeting();
+        showScreen('menu');
+    }
+}
+
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    // Si estamos en cualquier pantalla distinta a la bienvenida, cuenta el tiempo de inactividad del menú
+    if (state.currentScreen !== 'welcome') {
+        inactivityTimer = setTimeout(() => { 
+            resetATM(); // Mata la sesión, vuelve al inicio y reproduce el video
+        }, INACTIVITY_TIME);
+    }
+}
+
+
+
+const sideButtonByCode = {
+    KeyQ: 'L1',
+    KeyA: 'L2',
+    KeyZ: 'L3',
+    KeyW: 'L4',
+    KeyE: 'R1',
+    KeyD: 'R2',
+    KeyC: 'R3',
+    KeyR: 'R4'
+};
+
+document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    const sideButton = sideButtonByCode[e.code];
+    if (sideButton) {
+        e.preventDefault();
+        resetInactivityTimer();
+        clearWarnings();
+        handleSideButton(sideButton);
+        return;
+    }
+    if (/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        resetInactivityTimer();
+        clearWarnings();
+        handleNumberInput(e.key);
+    }
+});
+
+function clearWarnings() { document.querySelectorAll('.warning-msg').forEach(el => el.innerText = ''); }
+
+function handleNumberInput(num) {
+    if (state.currentScreen === 'welcome') {
+        state.inputBuffer = num;
+        showScreen('dni');
+    } else if (['dni', 'pin', 'extrac-monto', 'transf-dni', 'transf-monto', 'cambio-pin'].includes(state.currentScreen)) {
+        if (['pin', 'cambio-pin'].includes(state.currentScreen) && state.inputBuffer.length >= 4) return;
+        if (state.currentScreen === 'dni' && state.inputBuffer.length >= 8) return;
+        state.inputBuffer += num;
+    }
+    updateDisplays();
+}
+
+function updateDisplays() {
+    if (state.currentScreen === 'dni')
+        document.getElementById('dni-display').innerText = state.inputBuffer || '_';
+    if (state.currentScreen === 'pin')
+        document.getElementById('pin-display').innerText = '*'.repeat(state.inputBuffer.length) || '_';
+    if (state.currentScreen === 'extrac-monto')
+        document.getElementById('extrac-monto-display').innerText = '$' + (state.inputBuffer || '_');
+    if (state.currentScreen === 'transf-dni')
+        document.getElementById('transf-dni-display').innerText = state.inputBuffer || '_';
+    if (state.currentScreen === 'transf-monto')
+        document.getElementById('transf-monto-display').innerText = '$ ' + (state.inputBuffer || '_');
+    if (state.currentScreen === 'cambio-pin')
+        document.getElementById('newpin-display').innerText = '*'.repeat(state.inputBuffer.length) || '_';
+}
+
+function handleSideButton(btn) {
+    if (state.ticketPrintPending) return;
+    clearWarnings();
+
+    if (state.currentScreen === 'welcome') {
+        if (btn === 'R4') {
+            const video = document.getElementById('bg-video');
+            if (video) video.pause();
+            state.inputBuffer = '';
+            showScreen('dni');
+            updateDisplays();
+            return;
+        }
+    }
+
+    if (state.currentScreen === 'dni') {
+        if (btn === 'L4') {
+            resetATM();
+        }
+        if (btn === 'R4') {
+            if (state.inputBuffer.length < 7) {
+                document.getElementById('dni-warning').innerText = "Ingrese un DNI válido (mínimo 7 dígitos)";
+                return;
+            }
+            processDniLookup(state.inputBuffer);
+            state.inputBuffer = '';
+            showScreen('pin');
+            updateDisplays();
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'pin') {
+        if (btn === 'L4') {
+            resetATM();
+        }
+        if (btn === 'R4') {
+            state.inputBuffer = '';
+            saveSession();
+            updateMenuGreeting();
+            showScreen('menu');
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'extrac-monto') {
+        if (btn === 'L4') showScreen('menu');
+        if (btn === 'R4') {
+            const monto = parseInt(state.inputBuffer) || 0;
+            if (monto <= 0) {
+                document.getElementById('extrac-warning').innerText = "Ingrese un monto válido a retirar";
+                return;
+            }
+            state.inputBuffer = '';
+            if (monto > state.saldo) {
+                showInfo("OPERACIÓN RECHAZADA", `Saldo insuficiente.<br><br><b>Monto solicitado:</b> $${monto.toLocaleString()}<br><b>Saldo disponible:</b> $${state.saldo.toLocaleString()}`);
+            } else {
+                state.saldo -= monto;
+                saveSession();
+                showInfo("EXTRACCIÓN EXITOSA", `Se han retirado <b>$${monto.toLocaleString()}</b> correctamente.<br><br>Saldo restante: <b style="color:#00f0ff;">$${state.saldo.toLocaleString()}</b>`);
+            }
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'transf-dni') {
+        if (btn === 'L4') showScreen('menu');
+        if (btn === 'R4') {
+            if (state.inputBuffer.length < 7) {
+                document.getElementById('transf-dni-warning').innerText = "Ingrese el DNI del destinatario (mínimo 7 dígitos)";
+                return;
+            }
+            const destFound = alumnos.find(a => a.dni === state.inputBuffer);
+            state.transfDestName = destFound ? `${destFound.nombre} ${destFound.apellido} (${destFound.curso})` : `CBU / Cta. Externa N° ${state.inputBuffer}`;
+            document.getElementById('transf-dest-title').innerText = "Destinatario: " + state.transfDestName;
+            state.inputBuffer = '';
+            showScreen('transf-monto');
+            updateDisplays();
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'transf-monto') {
+        if (btn === 'L4') showScreen('menu');
+        if (btn === 'R4') {
+            const monto = parseInt(state.inputBuffer) || 0;
+            if (monto <= 0) {
+                document.getElementById('transf-monto-warning').innerText = "Ingrese un monto válido a transferir";
+                return;
+            }
+            state.inputBuffer = '';
+            if (monto > state.saldo) {
+                showInfo("OPERACIÓN RECHAZADA", `Saldo insuficiente.<br><br><b>Monto solicitado:</b> $${monto.toLocaleString()}<br><b>Saldo disponible:</b> $${state.saldo.toLocaleString()}`);
+            } else {
+                state.saldo -= monto;
+                saveSession();
+                showInfo("TRANSFERENCIA EXITOSA", `Se han transferido <b>$${monto.toLocaleString()}</b> a:<br><b>${state.transfDestName}</b>.<br><br>Nuevo Saldo: <b style="color:#00f0ff;">$${state.saldo.toLocaleString()}</b>`);
+            }
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'cambio-pin') {
+        if (btn === 'L4') showScreen('menu');
+        if (btn === 'R4') {
+            if (state.inputBuffer.length < 4) {
+                document.getElementById('pin-change-warning').innerText = "Debe ingresar una clave de 4 dígitos";
+                return;
+            }
+            state.inputBuffer = '';
+            showInfo("CAMBIO DE PIN", "¡Su clave PIN se ha actualizado con éxito!");
+        }
+        return;
+    }
+
+    if (state.currentScreen === 'info') {
+        if (btn === 'L4' || btn === 'R4') showScreen('menu');
+        return;
+    }
+
+    if (state.currentScreen === 'ticket-confirm') {
+        if (btn === 'L4') cancelWelcomeTicket();
+        else if (btn === 'R4') confirmWelcomeTicket();
+        return;
+    }
+
+    if (state.currentScreen === 'menu') {
+        if (btn === 'L1') {
+            const nombreMostrar = state.isAlumno && state.user && state.user.nombre ? `${state.user.nombre} ${state.user.apellido}` : `Invitado (DNI: ${state.dni})`;
+            showInfo("CONSULTA DE SALDO", `Hola <b>${nombreMostrar}</b><br><br>Saldo disponible: <b style="color:#00f0ff; font-size: 26px;">$${state.saldo.toLocaleString()}</b>`);
+        }
+        if (btn === 'L2') {
+            state.inputBuffer = '';
+            showScreen('extrac-monto');
+            updateDisplays();
+        }
+        if (btn === 'L3') {
+            state.inputBuffer = '';
+            showScreen('transf-dni');
+            updateDisplays();
+        }
+        if (btn === 'L4') {
+            resetATM();
+        }
+        if (btn === 'R1') window.location.href = "empresas.html";
+        if (btn === 'R2') window.location.href = "como_se_hizo.html";
+        if (btn === 'R3') window.location.href = "participantes.html";
+        if (btn === 'R4') requestWelcomeTicket();
+    }
+}
+
+function processDniLookup(dni) {
+    const found = alumnos.find(a => a.dni === dni);
+    state.saldo = Math.floor(Math.random() * 75000) + 10000;
+    state.user = found || { nombre: "Visitante", apellido: "Invitado" };
+    state.isAlumno = !!found;
+    state.dni = dni;
+    saveSession();
+}
+
+function requestWelcomeTicket() {
+    const dni = state.dni || (state.user && state.user.dni) || '';
+    if (!/^\d{7,8}$/.test(dni)) {
+        showInfo('NO SE PUEDE IMPRIMIR', 'No encontramos un DNI válido en esta sesión. Volvé a ingresar el DNI.');
+        return;
+    }
+    state.ticketConfirmationReturnScreen = state.currentScreen;
+    document.getElementById('ticket-confirm-dni').innerText = `DNI ingresado: ${dni}`;
+    showScreen('ticket-confirm');
+}
+
+function cancelWelcomeTicket() {
+    const returnScreen = state.ticketConfirmationReturnScreen;
+    state.ticketConfirmationReturnScreen = null;
+    showScreen(returnScreen || 'menu');
+}
+
+async function confirmWelcomeTicket() {
+    if (state.ticketPrintPending) return;
+    state.ticketConfirmationReturnScreen = null;
+    state.ticketPrintPending = true;
+    const dni = state.dni || (state.user && state.user.dni) || '';
+    showPrintMessage('IMPRIMIENDO BIENVENIDA', 'Esperá mientras se envía el ticket a la impresora.');
+    try {
+        const response = await fetch('http://127.0.0.1:3037/api/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dni })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            if (response.status === 409 && result.alreadyUsed) {
+                showPrintMessage('DNI YA UTILIZADO', `Este DNI ya tiene asignado el ticket N.º ${String(result.ticketNumber).padStart(6, '0')}. No se puede imprimir otro ticket con el mismo DNI.`);
+                return;
+            }
+            throw new Error(result.error || `Error del servicio de impresión (${response.status}).`);
+        }
+        showPrintMessage('Ticket de BIENVENIDA IMPRESO', `Ticket N.º ${String(result.ticketNumber).padStart(6, '0')}\n\n¡Gracias por visitar la Expo Tecno Contable!`);
+    } catch (error) {
+        console.error('No se pudo imprimir el ticket de bienvenida.', error);
+        const message = error instanceof TypeError ? 'No se pudo conectar con Node.js. Iniciá el servicio de impresión y volvé a intentar.' : error.message;
+        showPrintMessage('NO SE PUDO IMPRIMIR', message);
+    } finally {
+        state.ticketPrintPending = false;
+    }
+}
+
+function showPrintMessage(title, message) {
+    document.getElementById('info-title').innerText = title;
+    document.getElementById('info-content').innerText = message;
+    showScreen('info');
+}
+
+function showInfo(title, content) {
+    document.getElementById('info-title').innerHTML = title;
+    document.getElementById('info-content').innerHTML = content;
+    showScreen('info');
+}
+
+function showScreen(screenName) {
+    state.currentScreen = screenName;
+    clearWarnings();
+    resetInactivityTimer();
+    document.querySelectorAll('.atm-container > .menu-grid, div[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+    const target = document.getElementById(`screen-${screenName}`);
+    if (target) target.classList.remove('hidden');
+    
+    if (screenName === 'welcome') {
+        const video = document.getElementById('bg-video');
+        if (video) {
+            video.currentTime = 0;
+            video.play().catch(() => {});
+        }
+    }
+}
+
+function resetATM() {
+    sessionStorage.removeItem('ebank_session');
+    clearTimeout(inactivityTimer);
+    state.inputBuffer = '';
+    state.user = null;
+    state.isAlumno = false;
+    state.dni = '';
+    clearWarnings();
+    updateDisplays();
+    showScreen('welcome');
+}
+</script>
+</body>
+</html>

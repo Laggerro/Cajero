@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empresas Aliadas - eBANK</title>
+<script src="assets/js/cajero-config.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: #0b132b; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+.atm-container {
+    width: min(var(--atm-width), calc(100vw - 24px));
+    height: min(var(--atm-height), calc(100vh - 24px));
+    background: linear-gradient(135deg, #0f1c3f 0%, #1c2d5a 100%);
+    border: 10px solid #1c2d5a;
+    border-radius: 18px;
+    display: flex; flex-direction: column;
+    justify-content: space-between; padding: 20px;
+    box-shadow: 0 0 40px rgba(0, 102, 255, 0.3); position: relative;
+}
+.header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e63946; padding: 8px 15px; background: rgba(10, 20, 45, 0.6); border-radius: 8px; }
+.header-left { display: flex; align-items: center; gap: 15px; }
+.school-logo { height: 45px; width: auto; object-fit: contain; }
+.brand-title { font-size: 26px; font-weight: 800; color: #ffffff; }
+.brand-title span { color: #e63946; }
+.subtitle { padding-right: 15px; font-size: 16px; color: #a0aec0; text-transform: uppercase; font-weight: 600; }
+
+.menu-grid { width: 100%; display: flex; justify-content: center; align-items: stretch; flex-grow: 1; padding: 10px 0; }
+.menu-column { position: absolute; top: var(--button-start-y); left: 20px; width: 36%; display: grid; grid-template-rows: repeat(4, var(--button-row-height)); align-content: start; gap: var(--button-gap); }
+.right-col { left: auto; right: 20px; }
+.menu-column .btn-action-w, .menu-column .btn-action-r { grid-row: 4; }
+.left-col { text-align: left; }
+.right-col { text-align: right; }
+.btn-label {
+    font-size: var(--button-font-size) !important; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #ffffff;
+    height: var(--button-row-height); display: flex; align-items: center;
+    padding: 0 16px; border-left: 5px solid #00b4d8; border-radius: 6px; margin: 0;
+}
+.right-col.btn-label { 
+    border-left: none; 
+    border-right: 5px solid #00b4d8; 
+    justify-content: flex-end; 
+    text-align: right; 
+}
+.btn-action-w { border-left-color: #2ec4b6 !important; background: rgba(46, 196, 182, 0.15); }
+.btn-action-r { border-right-color: #e63946 !important; background: rgba(230, 57, 70, 0.15); }
+
+.content-center { width: 26%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.content-center > p, .content-center > h3, #page-indicator { font-size: var(--content-text-font-size) !important; }
+
+/* Modal de la Imagen alineado a la altura de los botones */
+.video-modal {
+    position: absolute;
+    top: var(--button-start-y);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--video-width), calc(100% - 20px));
+    background: #060d1f;
+    border: 3px solid #00b4d8;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+.promo-image {
+    width: 100%;
+    height: min(var(--video-height), 60vh);
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #1c2d5a;
+}
+.footer { text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; font-size: 13px; color: #94a3b8; }
+.hidden { display: none !important; }
+.badge { color: #fff; padding: 0px 0px; border-radius: 4px; font-size: 18px; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="atm-container">
+    <div class="header">
+        <div class="header-left">
+            <img src="assets/images/logo.png" alt="Logo Colegio" class="school-logo" onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">e<span>BANK</span></div>
+                <div class="subtitle">Empresas Aliadas</div>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <span class="badge">Departamento Economía</span>
+            <div class="subtitle" style="margin-top: 4px; color: #00b4d8;">EXPO Técno Contable</div>
+        </div>
+    </div>
+
+    <div class="menu-grid">
+        <div class="menu-column left-col">
+            <div id="btn-emp-1" class="btn-label">&lt; Dale Play</div>
+            <div id="btn-emp-2" class="btn-label">&lt; Dulcecito</div>
+            <div id="btn-emp-3" class="btn-label">&lt; Sticky Pins</div>
+            <div class="btn-label btn-action-w" id="btn-nav-prev">&lt; PAG. ANTERIOR</div>
+        </div>
+
+        <!-- Zona Central de Instrucciones -->
+        <div class="content-center">
+            <h3 style="font-size: 18px; color: #00b4d8; margin-bottom: 10px;">EMPRESAS QUE CONFIAN EN NOSOTROS</h3>
+            <p style="font-size: 13px; color: #a0aec0; line-height: 1.5;">
+                Presione el botón lateral de la empresa para ver su información institucional.
+            </p>
+            <p id="page-indicator" style="font-size: 12px; color: #00f0ff; margin-top: 15px; font-weight: bold;">Página 1 de 3</p>
+        </div>
+
+        <div class="menu-column right-col">
+            <div id="btn-emp-4" class="btn-label right-col">El Empanada de Miami &gt;</div>
+            <div id="btn-emp-5" class="btn-label right-col">Chocofruit &gt;</div>
+            <div id="btn-emp-6" class="btn-label right-col">Moxie &gt;</div>
+            <div class="btn-label btn-action-r right-col" id="btn-nav-next">PAG. SIGUIENTE &gt;</div>
+        </div>
+    </div>
+
+    <!-- Modal de Imagen (Oculto por defecto) -->
+    <div id="video-modal" class="video-modal hidden">
+        <h4 id="modal-title" style="color: #00f0ff; margin-bottom: 10px; font-size: 16px;">Nombre Empresa</h4>
+        <img id="company-image" class="promo-image" alt="Imagen de la Empresa">
+        <!-- Frase descriptiva específica para cada empresa -->
+        <p id="modal-desc" style="font-size: 16px; color: #ffffff; margin-top: 10px; text-align: center;">Descripción genérica de la empresa</p>
+    </div>
+
+    <div class="footer">
+        <span>Seleccione una empresa en los botones laterales para ver su imagen institucional</span>
+    </div>
+</div>
+
+<script>
+const paginasEmpresas = [
+    [
+        { id: 1, nombre: "Dale Play", video: "assets/videos/dale play.jpeg", descripcion: "Venta de videojuegos para adolescentes y amantes del mundo gamer." },
+        { id: 2, nombre: "Dulcecito", video: "assets/videos/dulcec ito.jpeg", descripcion: "Venta de frutas frescas para disfrutar de opciones naturales, ricas y saludables." },
+        { id: 3, nombre: "Sticky Pins", video: "assets/videos/sticky pins.jpeg", descripcion: "Venta de stickers y pins originales para expresar la personalidad y el estilo de cada cliente." },
+        { id: 4, nombre: "El Empanada de Miami", video: "assets/videos/empanadas miami.jpeg", descripcion: "Venta de empanadas que combinan un clásico de la gastronomía con una estética moderna inspirada en Miami." },
+        { id: 5, nombre: "Chocofruit", video: "assets/videos/chocofruit.jpeg", descripcion: "Elaboración y venta de productos frescos y deliciosos que combinan frutas y chocolate a precios accesibles." },
+        { id: 6, nombre: "Moxie", video: "assets/videos/moxie.jpeg", descripcion: "Diseño, producción y venta de stickers personalizados para expresar tu estilo y darle un cambio a tus objetos." }
+    ],
+    [
+        { id: 7, nombre: "Pancho manija", video: "assets/videos/pancho manija.jpeg", descripcion: "Venta de panchos y papas fritas para disfrutar de una comida rica, rápida y llena de sabor." },
+        { id: 8, nombre: "Perla & Brillo", video: "assets/videos/perla y brillo.jpeg", descripcion: "Creación y venta de accesorios para todos los estilos, incluyendo pulseras, anillos, collares y strass para celulares." },
+        { id: 9, nombre: "Mystery Boys", video: "assets/videos/Logo Mistery Boys.PNG", descripcion: "Venta de cajas misteriosas con productos sorpresa de distintas categorías para despertar la curiosidad de los clientes." },
+        { id: 10, nombre: "CoCo", video: "assets/videos/coco.png", descripcion: "Pastelería y cafetería que ofrece opciones ricas y saludables para disfrutar desayunos y meriendas." },
+        { id: 11, nombre: "Passion Sport", video: "assets/videos/passion sport.jpg", descripcion: "Venta de artículos deportivos de primeras marcas y alta calidad a precios accesibles." },
+        { id: 12, nombre: "Sabores al horno", video: "assets/videos/Sabores.jpeg", descripcion: "Emprendimiento gastronómico que ofrece productos de panadería y panchos frescos, ricos y accesibles." }
+    ],
+    [
+        { id: 13, nombre: "Sweet Station", video: "assets/videos/Sweet Station.jpeg", descripcion: "Venta de golosinas para disfrutar de una gran variedad de sabores dulces." }
+    ]
+];
+
+let currentPage = 0;
+let inactivityTimer = null;
+let isVideoPlaying = false;
+let imageCloseTimer = null;
+
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => { 
+        window.location.href = "index.html"; // Vuelve al menú principal manteniendo la sesión
+    }, getCajeroConfig().carouselInactivitySeconds * 1000);
+}
+function updateView() {
+    const empresas = paginasEmpresas[currentPage];
+    document.getElementById('page-indicator').innerText = `Página ${currentPage + 1} de ${paginasEmpresas.length}`;
+    
+    document.getElementById('btn-emp-1').innerHTML = `< ${empresas[0] ? empresas[0].nombre : '---'}`;
+    document.getElementById('btn-emp-2').innerHTML = `< ${empresas[1] ? empresas[1].nombre : '---'}`;
+    document.getElementById('btn-emp-3').innerHTML = `< ${empresas[2] ? empresas[2].nombre : '---'}`;
+    document.getElementById('btn-emp-4').innerHTML = `${empresas[3] ? empresas[3].nombre : '---'} >`;
+    document.getElementById('btn-emp-5').innerHTML = `${empresas[4] ? empresas[4].nombre : '---'} >`;
+    document.getElementById('btn-emp-6').innerHTML = `${empresas[5] ? empresas[5].nombre : '---'} >`;
+    
+    if (currentPage === paginasEmpresas.length - 1) {
+        document.getElementById('btn-nav-next').innerHTML = `VOLVER AL MENÚ &gt;`;
+    } else {
+        document.getElementById('btn-nav-next').innerHTML = `PAG. SIGUIENTE &gt;`;
+    }
+}
+
+function openVideoModal(index) {
+    const comp = paginasEmpresas[currentPage][index];
+    if (!comp) return;
+    
+    isVideoPlaying = true;
+    clearTimeout(inactivityTimer);
+    clearTimeout(imageCloseTimer);
+
+    // Actualiza el título y la descripción específica de la empresa seleccionada
+    document.getElementById('modal-title').innerText = comp.nombre;
+    document.getElementById('modal-desc').innerText = comp.descripcion || "Descripción pendiente...";
+    
+    const modal = document.getElementById('video-modal');
+    const img = document.getElementById('company-image');
+    
+    img.src = comp.video;
+    modal.classList.remove('hidden');
+
+    imageCloseTimer = setTimeout(() => {
+        closeVideoModal();
+    }, 30000);
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('video-modal');
+    const img = document.getElementById('company-image');
+    
+    clearTimeout(imageCloseTimer);
+    img.src = '';
+    modal.classList.add('hidden');
+    isVideoPlaying = false;
+    resetInactivityTimer();
+}
+
+document.addEventListener('keydown', (e) => {
+    if (isVideoPlaying) {
+        closeVideoModal();
+        return;
+    }
+
+    resetInactivityTimer();
+    const key = e.key.toUpperCase();
+    switch (key) {
+        case 'Q': openVideoModal(0); break;
+        case 'A': openVideoModal(1); break;
+        case 'Z': openVideoModal(2); break;
+        case 'E': openVideoModal(3); break;
+        case 'D': openVideoModal(4); break;
+        case 'C': openVideoModal(5); break;
+        case 'W':
+            if (currentPage > 0) {
+                currentPage--;
+                updateView();
+            } else {
+                window.location.href = "index.html";
+            }
+            break;
+        case 'R':
+            if (currentPage < paginasEmpresas.length - 1) {
+                currentPage++;
+                updateView();
+            } else {
+                window.location.href = "index.html";
+            }
+            break;
+    }
+});
+
+updateView();
+resetInactivityTimer();
+</script>
+</body>
+</html>
